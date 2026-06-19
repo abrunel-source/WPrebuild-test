@@ -80,6 +80,8 @@ Copy `.env.example` to `.env` for local dev only. **Never commit real values.**
 | `CONTACT_TO_EMAIL`           | `api/contact.ts`     | Recipient (default `info@floridaclinicians.org`) |
 | `MAILCHIMP_API_KEY`          | `api/subscribe.ts`   | Newsletter opt-in (datacenter auto-derived) |
 | `MAILCHIMP_AUDIENCE_ID`      | `api/subscribe.ts`   | Mailchimp audience/list ID               |
+| `OAUTH_GITHUB_CLIENT_ID`     | `api/auth.ts`        | Decap CMS GitHub login                   |
+| `OAUTH_GITHUB_CLIENT_SECRET` | `api/callback.ts`    | Decap CMS GitHub login (server-side)     |
 
 The contact form's `from:` address and the Resend domain must be a domain you've
 verified in Resend (floridaclinicians.org).
@@ -87,10 +89,21 @@ verified in Resend (floridaclinicians.org).
 ## Decap CMS (`/admin`)
 
 Uses the **GitHub backend** (git-gateway/Netlify Identity is not used on Vercel).
-To finish setup you need a GitHub OAuth app + a small OAuth handler (e.g.
-[`decap-cms-github-oauth`](https://github.com/ublabs/netlify-cms-oauth) deployed
-as a Vercel function, or Decap's hosted option), then point `backend.base_url`
-at it in `public/admin/config.yml`. Set `backend.branch` to the production branch.
+The OAuth handshake is served by this site's own serverless functions —
+`src/pages/api/auth.ts` and `src/pages/api/callback.ts` — so no third-party
+OAuth service is required. To finish setup:
+
+1. Create a **GitHub OAuth App** (GitHub → Settings → Developer settings →
+   OAuth Apps → New). Set the **Authorization callback URL** to
+   `https://<your-site>/api/callback`.
+2. Add `OAUTH_GITHUB_CLIENT_ID` and `OAUTH_GITHUB_CLIENT_SECRET` to the Vercel
+   project's environment variables.
+3. In `public/admin/config.yml`, set `backend.branch` to the production branch
+   and `backend.base_url` to your production origin (already set to
+   `https://floridaclinicians.org`).
+
+Editors then sign in at `/admin` with GitHub (they need write access to the
+repo). Saving commits Markdown, which triggers a Vercel redeploy.
 
 ## Develop
 

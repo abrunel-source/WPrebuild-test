@@ -4,11 +4,15 @@
 
 backend:
   # GitHub backend (Vercel hosting — git-gateway/Netlify Identity is not used).
-  # Requires a small OAuth provider; set its URL in `base_url` + `auth_endpoint`,
-  # or use Decap's hosted/Netlify OAuth. See README for setup.
+  # The OAuth handshake is served by this same site's serverless functions
+  # (src/pages/api/auth.ts + callback.ts). Configure a GitHub OAuth App with
+  # callback URL https://<site>/api/callback and set the client id/secret as
+  # Vercel env vars (OAUTH_GITHUB_CLIENT_ID / OAUTH_GITHUB_CLIENT_SECRET).
   name: github
   repo: abrunel-source/wprebuild-test
   branch: main # production branch the site deploys from
+  base_url: https://floridaclinicians.org
+  auth_endpoint: /api/auth
 
 # Draft -> In review -> Ready. Editors draft; admins do the final publish.
 publish_mode: editorial_workflow
