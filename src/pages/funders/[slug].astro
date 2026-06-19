@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const partners = await getCollection('partners', ({ data }) => !data.draft);
+  return partners.map((p) => ({ params: { slug: p.id }, props: { partner: p } }));
+}
+
+const { partner } = Astro.props;
+const { title, logo, mission, grantDate, amount } = partner.data;
+const { Content } = await render(partner);
+const grantLabel = grantDate
+  ? grantDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', timeZone: 'UTC' })
+  : null;
+---
+
+<BaseLayout title={title} description={mission} image={logo}>
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow" style="color:#fff"><a href="/funders/" style="color:#fff">Our Funders</a></p>
+      <h1>{title}</h1>
+    </div>
+  </section>
+
+  <article class="section">
+    <div class="content">
+      {logo && <img class="funder-logo" src={logo} alt={title} />}
+      {(grantLabel || amount) && (
+        <p class="grant-meta">
+          {amount && <span><strong>Grant:</strong> {amount}</span>}
+          {grantLabel && <span><strong>Awarded:</strong> {grantLabel}</span>}
+        </p>
+      )}
+      {mission && <p class="lead">{mission}</p>}
+      <div class="prose"><Content /></div>
+      <p style="margin-top:var(--space-xl)"><a href="/funders/">← Back to funders</a></p>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .funder-logo {
+    max-width: 280px;
+    margin-bottom: var(--space-lg);
+  }
+  .grant-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    color: var(--color-text-muted);
+  }
+</style>

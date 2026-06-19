@@ -1,72 +1,102 @@
-# WPrebuild — WordPress → Astro
+# Florida Clinicians for Climate Action — Astro rebuild
 
-A rebuild of a WordPress site (originally running the **Hello Elementor** theme)
-as a fast, static [Astro](https://astro.build) site. It preserves the original
-theme's structure and design system while shipping zero JavaScript by default.
+A rebuild of [floridaclinicians.org](https://floridaclinicians.org) — originally
+WordPress (Hello Elementor + Elementor Pro + JetEngine/Crocoblock) — as a fast,
+static [Astro](https://astro.build) site with [Decap CMS](https://decapcms.org)
+for editors and a few Vercel serverless functions for forms.
 
-## Why a rebuild instead of a port?
+- **Hosting:** Vercel (static output + serverless API routes)
+- **CMS:** Decap CMS at `/admin` (GitHub backend) — edits commit Markdown, which
+  triggers a Vercel rebuild
+- **Contact form:** `POST /api/contact` → Resend → `info@floridaclinicians.org`
+- **Newsletter opt-in:** footer form → `POST /api/subscribe` → Mailchimp (double opt-in)
+- **Secrets:** live in Vercel env vars only — never in the repo
 
-The uploaded WordPress files were the Hello Elementor *theme* — the scaffolding
-(`header.php`, `index.php`, `functions.php`, `theme.json`). The actual page
-content of an Elementor site lives in the WordPress database, not in these files,
-so what's reconstructable is the theme's **structure and design tokens**. Those
-have been recreated faithfully in Astro, with representative content you can
-replace.
+## Content model (WordPress CPTs → Astro collections)
 
-## How the WordPress theme maps to Astro
+The original site used JetEngine custom post types. These were inventoried from
+the WordPress database in the `.wpress` backup and mapped to Astro content
+collections (`src/content.config.ts`):
 
-| WordPress (Hello Elementor)            | Astro |
-| -------------------------------------- | ----- |
-| `header.php` + footer location         | `src/layouts/BaseLayout.astro` |
-| `template-parts/header.php`            | `src/components/Header.astro` |
-| Footer menu location                   | `src/components/Footer.astro` |
-| `index.php` template routing           | file-based routing in `src/pages/` |
-| `template-parts/archive.php` (loop)    | `src/pages/blog/index.astro` |
-| `template-parts/single.php`            | `src/pages/blog/[...slug].astro` |
-| `template-parts/search.php`            | `src/pages/search.astro` |
-| `template-parts/404.php`               | `src/pages/404.astro` |
-| `theme.json` design tokens             | CSS custom properties in `src/styles/global.css` |
-| `functions.php` `register_nav_menus()` | `src/data/site.ts` |
-| `title-tag` + description meta support | `<head>` in `BaseLayout.astro` |
-| "Skip to content" link                 | skip link in `BaseLayout.astro` |
+| WordPress CPT             | Astro collection | Archive route   | Single route        |
+| ------------------------- | ---------------- | --------------- | ------------------- |
+| `events`                  | `events`         | `/events/`      | `/events/[slug]/`   |
+| `team-members`            | `team`           | `/team/`        | `/team/[slug]/`     |
+| `the-resources`           | `resources`      | `/education/`   | `/resources/[slug]/`|
+| `partners`                | `partners`       | `/funders/`     | `/funders/[slug]/`  |
+| `external-news`(+`_fcca`) | `news`           | `/news/`        | `/news/[slug]/`     |
+| `mailchimp-newsletter`    | `newsletters`    | `/newsletters/` | (links out)         |
+| `page` (privacy, terms)   | `pages`          | —               | `/privacy/`, `/terms/` |
 
-### Design tokens carried over from `theme.json`
+Imported counts: 19 events, 14 team members, 26 resources, 3 funders, 13 news
+items, 35 newsletters. Leftover Envato/Hello-Elementor demo content (cleaning
+service blog posts, "test" resources) was intentionally excluded.
 
-- `layout.contentSize` `800px` → `--content-size`
-- `layout.wideSize` `1200px` → `--wide-size`
-- Custom colors, typography, and spacing scales
+Page-builder pages (Home, About, Advocacy, Project C-HOT, Contact) were rebuilt
+as bespoke Astro pages from the content extracted out of the Elementor data,
+since rendered Elementor markup doesn't carry over cleanly.
+
+## Brand / design system
+
+Lifted from the original Elementor global kit (`src/styles/global.css`):
+
+- Colors: primary `#016566`, secondary `#122D41`, text `#0B1727`, accent
+  `#12EDC9`, muted `#B4CDCD`
+- Fonts: Roboto (body) + Roboto Slab (headings)
+- Logo: `public/media/2023/07/FCCA-logo.png`
+
+## Media
+
+Referenced images and documents from the WordPress uploads were copied into
+`public/media/` (preserving the original `YYYY/MM/...` paths so links keep
+working). Only files actually referenced by imported content were copied, not
+the full 1.2 GB uploads tree.
 
 ## Project structure
 
 ```
 src/
-  components/    Header, Footer, PostCard, FormattedDate
-  content/blog/  Markdown blog posts (the "loop" content)
-  data/site.ts   Site identity + header/footer menus
-  layouts/       BaseLayout (head, header, footer, skip link)
-  pages/         index, blog/, about, contact, privacy, search, 404
-  styles/        global.css (reset + design tokens)
-public/          favicon and static assets
+  components/    Header (with dropdowns + Donate), Footer (Mailchimp opt-in), EventCard
+  content/       events, team, resources, partners, news, newsletters, pages (Markdown)
+  content.config.ts   collection schemas
+  data/site.ts   identity, nav menus, donate link
+  layouts/       BaseLayout (head, fonts, header, footer)
+  pages/         index, about, advocacy, project-c-hot, contact, privacy, terms,
+                 events/, team/, education/, resources/, funders/, news/, newsletters/,
+                 api/contact.ts, api/subscribe.ts
+  styles/        global.css (brand tokens + components)
+public/
+  admin/         Decap CMS (index.html + config.yml)
+  media/         imported WordPress media
 ```
 
-## Editing content
+## Environment variables (set in Vercel → Settings → Environment Variables)
 
-- **Blog posts** — add Markdown files to `src/content/blog/`. Frontmatter:
-  `title`, `description`, `pubDate`, optional `author`, `tags`, `updatedDate`, `draft`.
-- **Menus & site identity** — `src/data/site.ts`.
-- **Design tokens / styling** — `src/styles/global.css`.
+Copy `.env.example` to `.env` for local dev only. **Never commit real values.**
+
+| Variable                     | Used by              | Purpose                                  |
+| ---------------------------- | -------------------- | ---------------------------------------- |
+| `RESEND_API_KEY`             | `api/contact.ts`     | Send contact-form emails via Resend      |
+| `CONTACT_TO_EMAIL`           | `api/contact.ts`     | Recipient (default `info@floridaclinicians.org`) |
+| `MAILCHIMP_API_KEY`          | `api/subscribe.ts`   | Newsletter opt-in (datacenter auto-derived) |
+| `MAILCHIMP_AUDIENCE_ID`      | `api/subscribe.ts`   | Mailchimp audience/list ID               |
+
+The contact form's `from:` address and the Resend domain must be a domain you've
+verified in Resend (floridaclinicians.org).
+
+## Decap CMS (`/admin`)
+
+Uses the **GitHub backend** (git-gateway/Netlify Identity is not used on Vercel).
+To finish setup you need a GitHub OAuth app + a small OAuth handler (e.g.
+[`decap-cms-github-oauth`](https://github.com/ublabs/netlify-cms-oauth) deployed
+as a Vercel function, or Decap's hosted option), then point `backend.base_url`
+at it in `public/admin/config.yml`. Set `backend.branch` to the production branch.
 
 ## Develop
 
 ```bash
 npm install
-npm run dev      # local dev server at http://localhost:4321
-npm run build    # production build to ./dist
-npm run preview  # preview the production build
+npm run dev      # http://localhost:4321
+npm run build    # production build (static + serverless funcs)
+npm run preview  # preview the build
 ```
-
-## Deploy
-
-`npm run build` outputs static files to `dist/`, which can be hosted on any
-static host (Netlify, Vercel, Cloudflare Pages, GitHub Pages, etc.). Update the
-`site` value in `astro.config.mjs` to your production URL before deploying.

@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const team = await getCollection('team', ({ data }) => !data.draft);
+  return team.map((member) => ({ params: { slug: member.id }, props: { member } }));
+}
+
+const { member } = Astro.props;
+const { title, role, photo } = member.data;
+const { Content } = await render(member);
+---
+
+<BaseLayout title={title} description={role} image={photo}>
+  <article class="section">
+    <div class="container member">
+      {photo && (
+        <div class="member__aside">
+          <img src={photo} alt={title} />
+        </div>
+      )}
+      <div class="member__main">
+        <p class="eyebrow"><a href="/team/">Our Team</a></p>
+        <h1>{title}</h1>
+        {role && <p class="member__role">{role}</p>}
+        <div class="prose"><Content /></div>
+        <p style="margin-top:var(--space-lg)"><a href="/team/">← Back to the team</a></p>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .member {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+  .member__aside img {
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 90px;
+    width: 100%;
+  }
+  .member__role {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    color: var(--color-primary);
+    font-size: 1.15rem;
+    margin-bottom: var(--space-md);
+  }
+  @media (max-width: 760px) {
+    .member {
+      grid-template-columns: 1fr;
+    }
+    .member__aside img {
+      max-width: 240px;
+      position: static;
+    }
+  }
+</style>

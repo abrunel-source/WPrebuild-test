@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const news = await getCollection('news', ({ data }) => !data.draft);
+  return news.map((n) => ({ params: { slug: n.id }, props: { item: n } }));
+}
+
+const { item } = Astro.props;
+const { title, category, date, externalUrl, image } = item.data;
+const { Content } = await render(item);
+const dateLabel = date
+  ? date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })
+  : null;
+---
+
+<BaseLayout title={title} image={image}>
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow" style="color:#fff"><a href="/news/" style="color:#fff">{category}</a></p>
+      <h1>{title}</h1>
+      {dateLabel && <p>{dateLabel}</p>}
+    </div>
+  </section>
+
+  <article class="section">
+    <div class="content">
+      {image && <img class="news-banner" src={image} alt={title} />}
+      {externalUrl && (
+        <p>
+          <a class="button button--accent" href={externalUrl} target="_blank" rel="noopener">
+            Read the full story ↗
+          </a>
+        </p>
+      )}
+      <div class="prose"><Content /></div>
+      <p style="margin-top:var(--space-xl)"><a href="/news/">← Back to News</a></p>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .news-banner {
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--space-lg);
+  }
+</style>

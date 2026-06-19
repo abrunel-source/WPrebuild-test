@@ -1,39 +1,146 @@
-# Decap CMS configuration
-# Editors manage content here at /admin. Saving commits Markdown to the repo,
-# which triggers a rebuild + redeploy so changes appear on the live site.
+# Decap CMS configuration for Florida Clinicians for Climate Action.
+# Editors manage content at /admin. Saving commits Markdown to the repo, which
+# triggers a Vercel rebuild + redeploy so changes appear on the live site.
 
 backend:
-  # `git-gateway` works with Netlify Identity (invite your 2-3 editors by email).
-  # To host elsewhere, switch to the `github` backend + an OAuth app instead.
-  name: git-gateway
-  branch: main # <-- set this to the branch your site deploys from
+  # GitHub backend (Vercel hosting — git-gateway/Netlify Identity is not used).
+  # Requires a small OAuth provider; set its URL in `base_url` + `auth_endpoint`,
+  # or use Decap's hosted/Netlify OAuth. See README for setup.
+  name: github
+  repo: abrunel-source/wprebuild-test
+  branch: main # production branch the site deploys from
 
 # Draft -> In review -> Ready. Editors draft; admins do the final publish.
 publish_mode: editorial_workflow
 
-# Image/file uploads land here and are referenced from the site root.
-media_folder: "public/images/uploads"
-public_folder: "/images/uploads"
+# Uploads land in /public/media (alongside the imported WordPress media) and are
+# referenced from the site root as /media/...
+media_folder: "public/media/uploads"
+public_folder: "/media/uploads"
 
 collections:
-  # Blog / news posts. (Additional post types from the WP backup get their
-  # own collections here once the export is in.)
-  - name: "blog"
-    label: "Blog Posts"
-    label_singular: "Post"
-    description: "News and articles shown on the site."
-    folder: "src/content/blog"
+  - name: "events"
+    label: "Events"
+    label_singular: "Event"
+    description: "Webinars, CME sessions, meetings, and community events."
+    folder: "src/content/events"
     create: true
     slug: "{{slug}}"
     extension: "md"
     format: "frontmatter"
-    sortable_fields: ["pubDate", "title"]
+    sortable_fields: ["date", "title"]
     fields:
       - { label: "Title", name: "title", widget: "string" }
-      - { label: "Description / Excerpt", name: "description", widget: "text" }
-      - { label: "Publish Date", name: "pubDate", widget: "datetime" }
-      - { label: "Updated Date", name: "updatedDate", widget: "datetime", required: false }
-      - { label: "Author", name: "author", widget: "string", default: "FCCA" }
-      - { label: "Tags", name: "tags", widget: "list", required: false }
+      - { label: "Date", name: "date", widget: "datetime", required: false }
+      - { label: "Time", name: "time", widget: "string", required: false }
+      - { label: "Location", name: "location", widget: "string", required: false }
+      - { label: "Registration URL", name: "registrationUrl", widget: "string", required: false }
+      - { label: "Registration Button Text", name: "registrationText", widget: "string", required: false, default: "Register" }
+      - { label: "Image", name: "image", widget: "image", required: false }
+      - { label: "Image Alt", name: "imageAlt", widget: "string", required: false }
+      - { label: "Draft", name: "draft", widget: "boolean", default: false }
+      - { label: "Body", name: "body", widget: "markdown", required: false }
+
+  - name: "team"
+    label: "Team Members"
+    label_singular: "Team Member"
+    folder: "src/content/team"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    sortable_fields: ["order", "title"]
+    fields:
+      - { label: "Name", name: "title", widget: "string" }
+      - { label: "Role", name: "role", widget: "string", required: false }
+      - { label: "Photo", name: "photo", widget: "image", required: false }
+      - { label: "Order", name: "order", widget: "number", default: 999, value_type: "int" }
+      - { label: "Draft", name: "draft", widget: "boolean", default: false }
+      - { label: "Bio", name: "body", widget: "markdown", required: false }
+
+  - name: "resources"
+    label: "Education / Resources"
+    label_singular: "Resource"
+    folder: "src/content/resources"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    sortable_fields: ["date", "title"]
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime", required: false }
+      - { label: "Image", name: "image", widget: "image", required: false }
+      - { label: "Document (PDF/PPT URL)", name: "document", widget: "string", required: false }
+      - { label: "External URL", name: "externalUrl", widget: "string", required: false }
+      - { label: "YouTube URL", name: "youtube", widget: "string", required: false }
+      - { label: "SoundCloud URL", name: "soundcloud", widget: "string", required: false }
+      - { label: "Draft", name: "draft", widget: "boolean", default: false }
+      - { label: "Body", name: "body", widget: "markdown", required: false }
+
+  - name: "partners"
+    label: "Funders / Partners"
+    label_singular: "Funder"
+    folder: "src/content/partners"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    fields:
+      - { label: "Name", name: "title", widget: "string" }
+      - { label: "Logo", name: "logo", widget: "image", required: false }
+      - { label: "Mission", name: "mission", widget: "text", required: false }
+      - { label: "Grant Date", name: "grantDate", widget: "datetime", required: false }
+      - { label: "Amount", name: "amount", widget: "string", required: false }
+      - { label: "Draft", name: "draft", widget: "boolean", default: false }
+      - { label: "Body", name: "body", widget: "markdown", required: false }
+
+  - name: "news"
+    label: "News & Press"
+    label_singular: "News Item"
+    folder: "src/content/news"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    sortable_fields: ["date", "title"]
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Category", name: "category", widget: "select", options: ["In the Press", "FCCA News"], default: "In the Press" }
+      - { label: "Date", name: "date", widget: "datetime", required: false }
+      - { label: "External URL", name: "externalUrl", widget: "string", required: false }
+      - { label: "Image", name: "image", widget: "image", required: false }
+      - { label: "Draft", name: "draft", widget: "boolean", default: false }
+      - { label: "Body", name: "body", widget: "markdown", required: false }
+
+  - name: "newsletters"
+    label: "Newsletters"
+    label_singular: "Newsletter"
+    folder: "src/content/newsletters"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    sortable_fields: ["date", "title"]
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime", required: false }
+      - { label: "External URL (Mailchimp)", name: "externalUrl", widget: "string", required: false }
+      - { label: "Image", name: "image", widget: "image", required: false }
+      - { label: "Draft", name: "draft", widget: "boolean", default: false }
+      - { label: "Body", name: "body", widget: "markdown", required: false }
+
+  - name: "pages"
+    label: "Pages"
+    label_singular: "Page"
+    description: "Legal and standalone content pages (privacy, terms)."
+    folder: "src/content/pages"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Description", name: "description", widget: "string", required: false }
       - { label: "Draft", name: "draft", widget: "boolean", default: false }
       - { label: "Body", name: "body", widget: "markdown" }

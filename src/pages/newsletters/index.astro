@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { site } from '../../data/site';
+
+const newsletters = (await getCollection('newsletters', ({ data }) => !data.draft)).sort(
+  (a, b) => (b.data.date?.valueOf() ?? 0) - (a.data.date?.valueOf() ?? 0)
+);
+---
+
+<BaseLayout title="Newsletters" description="The FCCA newsletter archive.">
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow" style="color:#fff">Stay informed</p>
+      <h1>Newsletter Archive</h1>
+      <p>Our monthly newsletters and advocacy updates. Subscribe in the footer to get the next one.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <ul class="newsletter-list" role="list">
+        {newsletters.map((n) => (
+          <li class="newsletter-item">
+            <div>
+              <h3 class="newsletter-title">{n.data.title}</h3>
+              {n.data.date && (
+                <p class="card__meta">
+                  {n.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', timeZone: 'UTC' })}
+                </p>
+              )}
+            </div>
+            {n.data.externalUrl && (
+              <a class="button button--ghost" href={n.data.externalUrl} target="_blank" rel="noopener">
+                Read ↗
+              </a>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .newsletter-list {
+    display: grid;
+    gap: var(--space-sm);
+    margin: 0;
+    padding: 0;
+    max-width: 760px;
+  }
+  .newsletter-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: #fff;
+  }
+  .newsletter-title {
+    font-size: 1.1rem;
+    margin: 0;
+  }
+</style>

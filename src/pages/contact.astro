@@ -1,63 +1,107 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../data/site';
 ---
 
-<BaseLayout title="Contact" description="Get in touch.">
-  <div class="content">
-    <h1>Contact</h1>
-    <p>
-      Have a question or want to get in touch? Fill out the form below. This is a
-      static demo form — wire the <code>action</code> up to a form backend
-      (such as Formspree, Netlify Forms, or your own endpoint) to receive
-      submissions.
-    </p>
+<BaseLayout title="Contact" description="Get in touch with Florida Clinicians for Climate Action.">
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow" style="color:#fff">Contact</p>
+      <h1>Get In Touch</h1>
+      <p>Questions, partnership ideas, or want to volunteer? We'd love to hear from you.</p>
+    </div>
+  </section>
 
-    <form class="contact-form" action="#" method="post">
-      <div class="field">
-        <label for="name">Name</label>
-        <input id="name" name="name" type="text" required />
-      </div>
-      <div class="field">
-        <label for="email">Email</label>
-        <input id="email" name="email" type="email" required />
-      </div>
-      <div class="field">
-        <label for="message">Message</label>
-        <textarea id="message" name="message" rows="6" required></textarea>
-      </div>
-      <button class="button" type="submit">Send message</button>
-    </form>
-  </div>
+  <section class="section">
+    <div class="content">
+      <p>
+        Email us any time at <a href={`mailto:${site.email}`}>{site.email}</a>, or send a
+        message using the form below.
+      </p>
+
+      <form class="contact-form" action="/api/contact" method="post" data-contact>
+        <div class="field">
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text" autocomplete="name" required />
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" required />
+        </div>
+        <div class="field">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="6" required></textarea>
+        </div>
+        <!-- Honeypot: hidden from humans, tempting to bots. -->
+        <div class="field field--trap" aria-hidden="true">
+          <label for="company">Company</label>
+          <input id="company" name="company" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+        <button class="button button--accent" type="submit">Send message</button>
+        <p class="form-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
 </BaseLayout>
+
+<script>
+  const form = document.querySelector('form[data-contact]') as HTMLFormElement | null;
+  if (form) {
+    const status = form.querySelector('.form-status') as HTMLElement;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      status.textContent = 'Sending…';
+      try {
+        const res = await fetch(form.action, { method: 'POST', body: new FormData(form) });
+        const data = await res.json().catch(() => ({}));
+        status.textContent = data.message || data.error || 'Thanks!';
+        if (res.ok) form.reset();
+      } catch {
+        status.textContent = 'Something went wrong. Please email us directly.';
+      }
+    });
+  }
+</script>
 
 <style>
   .contact-form {
     display: grid;
     gap: var(--space-md);
-    max-width: 32rem;
+    max-width: 34rem;
+    margin-top: var(--space-lg);
   }
-
   .field {
     display: grid;
     gap: var(--space-xs);
   }
-
   label {
     font-weight: 600;
   }
-
   input,
   textarea {
     width: 100%;
-    padding: var(--space-xs) var(--space-sm);
+    padding: 0.6rem 0.9rem;
     border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+    border-radius: var(--radius-sm);
     background: var(--color-background);
   }
-
+  input:focus,
+  textarea:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 1px;
+  }
+  .field--trap {
+    position: absolute;
+    left: -9999px;
+  }
   button {
     justify-self: start;
-    border: none;
     cursor: pointer;
+  }
+  .form-status {
+    margin: 0;
+    min-height: 1.2em;
+    font-weight: 600;
+    color: var(--color-primary);
   }
 </style>

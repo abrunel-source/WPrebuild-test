@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const events = await getCollection('events', ({ data }) => !data.draft);
+  return events.map((event) => ({ params: { slug: event.id }, props: { event } }));
+}
+
+const { event } = Astro.props;
+const { title, date, time, location, registrationUrl, registrationText, image, imageAlt } = event.data;
+const { Content } = await render(event);
+
+const dateLabel = date
+  ? date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })
+  : null;
+const isCoords = location && /^-?\d+(\.\d+)?,\s*-?\d+(\.\d+)?$/.test(location.trim());
+const place = location && !isCoords ? location : null;
+---
+
+<BaseLayout title={title} image={image}>
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow" style="color:#fff"><a href="/events/" style="color:#fff">Events</a></p>
+      <h1>{title}</h1>
+      {dateLabel && <p>{dateLabel}{time ? ` · ${time}` : ''}{place ? ` · ${place}` : ''}</p>}
+    </div>
+  </section>
+
+  <article class="section">
+    <div class="content">
+      {image && <img class="event-banner" src={image} alt={imageAlt || title} />}
+      {registrationUrl && (
+        <p>
+          <a class="button button--accent" href={registrationUrl} target="_blank" rel="noopener">
+            {registrationText || 'Register'}
+          </a>
+        </p>
+      )}
+      <div class="prose"><Content /></div>
+      <p style="margin-top:var(--space-xl)"><a href="/events/">← Back to all events</a></p>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .event-banner {
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--space-lg);
+  }
+</style>

@@ -1,0 +1,89 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const now = new Date();
+const events = (await getCollection('events', ({ data }) => !data.draft))
+  .filter((e) => e.data.date && (e.data.date as Date) >= now)
+  .sort((a, b) => (a.data.date as Date).valueOf() - (b.data.date as Date).valueOf())
+  .slice(0, 3);
+---
+
+<BaseLayout
+  title="Project C-HOT"
+  description="The Climate Health Outreach Team (C-HOT) and Doula C-HOT programs."
+>
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow" style="color:#fff">Programs</p>
+      <h1>Project C-HOT</h1>
+      <p>FCCA's Climate Health Outreach Team — clinicians and community educators on the front lines.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="content">
+      <p class="lead">
+        Project C-HOT (Climate Health Outreach Team) trains clinicians and community
+        members to recognize climate-related health risks — especially extreme heat — and
+        to help patients and neighbors prepare.
+      </p>
+      <p>
+        As clinicians in Florida, we educate and engage other Florida clinicians to protect
+        communities against the health harms of climate change. C-HOT extends that mission
+        into the community through hands-on education, risk-assessment tools, and trusted
+        local messengers.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--surface">
+    <div class="content">
+      <p class="eyebrow">A C-HOT initiative</p>
+      <h2>Doula C-HOT</h2>
+      <p>
+        Doula C-HOT empowers local doulas through specialized training to use risk-assessment
+        tools that identify and address the needs of pregnant and postpartum people in the
+        face of climate-related disasters such as floods and extreme heat. Doulas learn to
+        recognize climate-related health risks and put effective, community-centered support
+        into practice.
+      </p>
+      <p><a class="button" href="/contact/">Get involved</a></p>
+    </div>
+  </section>
+
+  {events.length > 0 && (
+    <section class="section">
+      <div class="container">
+        <header class="section-head section-head--row">
+          <div><p class="eyebrow">Events</p><h2>Upcoming Trainings &amp; Events</h2></div>
+          <a class="button button--ghost" href="/events/">See all events</a>
+        </header>
+        <div class="grid grid--3">
+          {events.map((event) => (
+            <article class="card">
+              {event.data.image && (
+                <a class="card__media" href={`/events/${event.id}/`}><img src={event.data.image} alt={event.data.title} loading="lazy" /></a>
+              )}
+              <div class="card__body">
+                <span class="tag">Event</span>
+                <h3 class="card__title"><a href={`/events/${event.id}/`}>{event.data.title}</a></h3>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <style>
+    .section-head--row {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+      margin-bottom: var(--space-xl);
+    }
+  </style>
+</BaseLayout>

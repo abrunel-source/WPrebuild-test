@@ -1,0 +1,44 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  event: CollectionEntry<'events'>;
+}
+const { event } = Astro.props;
+const { title, date, time, location, image, imageAlt } = event.data;
+
+const dateLabel = date
+  ? date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })
+  : null;
+
+// Location is sometimes stored as raw "lat,lng" coordinates — hide those.
+const isCoords = location && /^-?\d+(\.\d+)?,\s*-?\d+(\.\d+)?$/.test(location.trim());
+const place = location && !isCoords ? location : null;
+---
+
+<article class="card">
+  {image && (
+    <a class="card__media" href={`/events/${event.id}/`}>
+      <img src={image} alt={imageAlt || title} loading="lazy" />
+    </a>
+  )}
+  <div class="card__body">
+    {dateLabel && (
+      <p class="card__meta">
+        <span class="tag">Event</span>
+        <span class="event-date">{dateLabel}{time ? ` · ${time}` : ''}</span>
+      </p>
+    )}
+    <h3 class="card__title"><a href={`/events/${event.id}/`}>{title}</a></h3>
+    {place && <p class="card__meta">📍 {place}</p>}
+  </div>
+</article>
+
+<style>
+  .event-date {
+    display: block;
+    margin-top: 0.35rem;
+    font-weight: 600;
+    color: var(--color-primary);
+  }
+</style>

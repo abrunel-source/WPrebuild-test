@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EventCard from '../../components/EventCard.astro';
+import { getCollection } from 'astro:content';
+
+const now = new Date();
+const events = (await getCollection('events', ({ data }) => !data.draft)).filter((e) => e.data.date);
+const upcoming = events
+  .filter((e) => (e.data.date as Date) >= now)
+  .sort((a, b) => (a.data.date as Date).valueOf() - (b.data.date as Date).valueOf());
+const past = events
+  .filter((e) => (e.data.date as Date) < now)
+  .sort((a, b) => (b.data.date as Date).valueOf() - (a.data.date as Date).valueOf());
+---
+
+<BaseLayout title="Events" description="Upcoming and past events from Florida Clinicians for Climate Action.">
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow" style="color:#fff">Get involved</p>
+      <h1>Events</h1>
+      <p>Webinars, CME sessions, ambassador meetings, and community gatherings.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>Upcoming</h2>
+      {upcoming.length ? (
+        <div class="grid grid--3">{upcoming.map((event) => <EventCard event={event} />)}</div>
+      ) : (
+        <p>No upcoming events are scheduled right now — check back soon.</p>
+      )}
+    </div>
+  </section>
+
+  {past.length > 0 && (
+    <section class="section section--surface">
+      <div class="container">
+        <h2>Past events</h2>
+        <div class="grid grid--3">{past.map((event) => <EventCard event={event} />)}</div>
+      </div>
+    </section>
+  )}
+</BaseLayout>

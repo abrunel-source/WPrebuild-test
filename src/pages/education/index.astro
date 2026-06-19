@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const resources = (await getCollection('resources', ({ data }) => !data.draft)).sort(
+  (a, b) => (b.data.date?.valueOf() ?? 0) - (a.data.date?.valueOf() ?? 0)
+);
+---
+
+<BaseLayout title="Education" description="CMEs, lectures, reports, and climate-and-health resources for clinicians.">
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow" style="color:#fff">Educate</p>
+      <h1>Education &amp; Resources</h1>
+      <p>Free CMEs, expert lectures, reports, and tools on the health impacts of climate change.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="grid grid--3">
+        {resources.map((r) => (
+          <article class="card">
+            {r.data.image && (
+              <a class="card__media" href={`/resources/${r.id}/`}>
+                <img src={r.data.image} alt={r.data.title} loading="lazy" />
+              </a>
+            )}
+            <div class="card__body">
+              <span class="tag">Resource</span>
+              <h3 class="card__title"><a href={`/resources/${r.id}/`}>{r.data.title}</a></h3>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

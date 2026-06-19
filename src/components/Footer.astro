@@ -1,16 +1,27 @@
 ---
 /**
- * Site footer — equivalent of Hello Elementor's footer location
- * (footer nav "menu-2" + copyright).
+ * Site footer — newsletter opt-in (Mailchimp double opt-in via /api/subscribe),
+ * secondary nav, and contact details.
  */
 import { site, footerMenu } from '../data/site';
 
 const year = new Date().getFullYear();
 ---
 
-<footer class="site-footer">
-  <div class="container site-footer__inner">
-    <nav class="footer-navigation" aria-label="Footer">
+<footer id="footer" class="site-footer">
+  <div class="container site-footer__grid">
+    <div class="footer-brand">
+      <img src={site.logo} alt={site.title} width="200" height="66" class="footer-logo" />
+      <p class="footer-tagline">{site.tagline}</p>
+      <p class="footer-mission">
+        As clinicians in Florida, we educate and engage other clinicians to protect
+        communities against the health harms of climate change, and advocate for
+        equitable public health solutions.
+      </p>
+    </div>
+
+    <nav class="footer-nav" aria-label="Footer">
+      <h2 class="footer-heading">Explore</h2>
       <ul class="footer-menu" role="list">
         {footerMenu.map((item) => (
           <li><a href={item.href}>{item.label}</a></li>
@@ -18,51 +29,169 @@ const year = new Date().getFullYear();
       </ul>
     </nav>
 
+    <div class="footer-subscribe">
+      <h2 class="footer-heading">Subscribe to our Newsletter</h2>
+      <p>Get FCCA news, events, and advocacy updates in your inbox.</p>
+      <form class="subscribe-form" action="/api/subscribe" method="post" data-newsletter>
+        <label class="screen-reader-text" for="footer-email">Email address</label>
+        <input
+          id="footer-email"
+          type="email"
+          name="email"
+          placeholder="you@example.com"
+          required
+        />
+        <button class="button button--accent" type="submit">Sign up</button>
+        <p class="form-status" role="status" aria-live="polite"></p>
+      </form>
+      <p class="footer-contact">
+        <a href={`mailto:${site.email}`}>{site.email}</a>
+      </p>
+    </div>
+  </div>
+
+  <div class="container site-footer__bar">
     <p class="site-info">
-      &copy; {year} {site.title}. Built with <a href="https://astro.build">Astro</a>.
+      &copy; {year} {site.title}. All rights reserved.
+    </p>
+    <p class="site-credits">
+      <a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a>
     </p>
   </div>
 </footer>
 
+<script>
+  // Progressive enhancement: submit the newsletter form via fetch so we can
+  // show inline status without a full page reload. Falls back to a normal
+  // POST if JS is disabled.
+  const form = document.querySelector('form[data-newsletter]') as HTMLFormElement | null;
+  if (form) {
+    const status = form.querySelector('.form-status') as HTMLElement;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      status.textContent = 'Submitting…';
+      try {
+        const res = await fetch(form.action, { method: 'POST', body: new FormData(form) });
+        const data = await res.json().catch(() => ({}));
+        status.textContent = data.message || data.error || 'Thanks!';
+        if (res.ok) form.reset();
+      } catch {
+        status.textContent = 'Something went wrong. Please try again.';
+      }
+    });
+  }
+</script>
+
 <style>
   .site-footer {
-    border-top: 1px solid var(--color-border);
-    background: var(--color-surface);
-    padding-block: var(--space-lg);
-    margin-top: var(--space-xl);
+    background: var(--color-secondary);
+    color: rgba(255, 255, 255, 0.82);
+    margin-top: var(--space-2xl);
   }
 
-  .site-footer__inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-md);
-    text-align: center;
+  .site-footer__grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1.5fr;
+    gap: var(--space-xl);
+    padding-block: var(--space-2xl);
+  }
+
+  .footer-logo {
+    background: #fff;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-sm);
+    width: auto;
+    height: 56px;
+    margin-bottom: var(--space-sm);
+  }
+
+  .footer-tagline {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    color: var(--color-accent);
+    margin-bottom: var(--space-sm);
+  }
+
+  .footer-mission {
+    font-size: 0.92rem;
+    margin: 0;
+  }
+
+  .footer-heading {
+    color: #fff;
+    font-size: 1.1rem;
+    margin-bottom: var(--space-sm);
   }
 
   .footer-menu {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--space-md);
     list-style: none;
     margin: 0;
     padding: 0;
+    display: grid;
+    gap: 0.5rem;
   }
 
-  .footer-menu a {
-    color: var(--color-text);
+  .footer-menu a,
+  .footer-contact a,
+  .site-credits a {
+    color: rgba(255, 255, 255, 0.82);
     text-decoration: none;
-    font-weight: 500;
   }
 
-  .footer-menu a:hover {
-    color: var(--color-link);
+  .footer-menu a:hover,
+  .footer-contact a:hover,
+  .site-credits a:hover {
+    color: var(--color-accent);
   }
 
-  .site-info {
+  .subscribe-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-block: var(--space-sm);
+  }
+
+  .subscribe-form input {
+    flex: 1 1 180px;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--color-text);
+  }
+
+  .form-status {
+    flex-basis: 100%;
     margin: 0;
-    color: var(--color-text-muted);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    min-height: 1.2em;
+    color: var(--color-accent);
+  }
+
+  .footer-contact {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .site-footer__bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding-block: var(--space-md);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    font-size: 0.85rem;
+  }
+
+  .site-info,
+  .site-credits {
+    margin: 0;
+  }
+
+  @media (max-width: 860px) {
+    .site-footer__grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-lg);
+    }
   }
 </style>

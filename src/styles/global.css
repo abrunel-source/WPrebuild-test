@@ -1,35 +1,43 @@
 /*
- * Global styles + design system.
+ * Global styles + design system for Florida Clinicians for Climate Action.
  *
- * Translates the Hello Elementor theme.json tokens and the theme's
- * reset.css / theme.css philosophy into modern CSS custom properties.
- *
- *   theme.json -> layout.contentSize = 800px  -> --content-size
- *   theme.json -> layout.wideSize    = 1200px -> --wide-size
+ * Brand tokens lifted from the original Elementor global kit (kit 2343):
+ *   primary   #016566  (teal)
+ *   secondary #122D41  (deep navy)
+ *   text      #0B1727  (near-black navy)
+ *   accent    #12EDC9  (mint)
+ *   muted     #B4CDCD  (sea-glass)
+ *   fonts     Roboto (body), Roboto Slab (headings)
  */
 
 :root {
-  /* Layout (from theme.json) */
-  --content-size: 800px;
+  /* Layout */
+  --content-size: 820px;
   --wide-size: 1200px;
 
-  /* Colors */
-  --color-text: #1a1a1a;
-  --color-text-muted: #6b7280;
+  /* Brand colors */
+  --color-primary: #016566;
+  --color-primary-dark: #014a4b;
+  --color-secondary: #122d41;
+  --color-accent: #12edc9;
+  --color-muted: #b4cdcd;
+
+  --color-text: #0b1727;
+  --color-text-muted: #5b6b73;
   --color-background: #ffffff;
-  --color-surface: #f7f7f8;
-  --color-border: #e5e7eb;
-  --color-link: #2563eb;
-  --color-link-hover: #1d4ed8;
-  --color-accent: #111827;
+  --color-surface: #f1f6f6;
+  --color-surface-2: #e6eeee;
+  --color-border: #d6e0e0;
+  --color-link: #016566;
+  --color-link-hover: #014a4b;
 
   /* Typography */
-  --font-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  --font-heading: var(--font-base);
+  --font-base: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Helvetica Neue", sans-serif;
+  --font-heading: "Roboto Slab", Georgia, "Times New Roman", serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  --font-size-base: 1.125rem;
+  --font-size-base: 1.0625rem;
   --line-height-base: 1.7;
 
   /* Spacing scale */
@@ -38,11 +46,15 @@
   --space-md: 1.5rem;
   --space-lg: 2.5rem;
   --space-xl: 4rem;
+  --space-2xl: 6rem;
 
-  --radius: 8px;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --shadow: 0 10px 30px -12px rgba(11, 23, 39, 0.18);
+  --shadow-sm: 0 4px 14px -8px rgba(11, 23, 39, 0.25);
 }
 
-/* ---------- Reset (mirrors hello-elementor reset.css) ---------- */
+/* ---------- Reset ---------- */
 *,
 *::before,
 *::after {
@@ -112,19 +124,20 @@ h4,
 h5,
 h6 {
   font-family: var(--font-heading);
-  line-height: 1.2;
+  line-height: 1.15;
   font-weight: 700;
+  color: var(--color-secondary);
   margin-bottom: var(--space-sm);
 }
 
 h1 {
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(2.1rem, 5vw, 3.25rem);
 }
 h2 {
-  font-size: clamp(1.6rem, 4vw, 2.25rem);
+  font-size: clamp(1.7rem, 4vw, 2.4rem);
 }
 h3 {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
 }
 
 p {
@@ -149,22 +162,8 @@ code {
   border-radius: 4px;
 }
 
-pre {
-  font-family: var(--font-mono);
-  background: var(--color-surface);
-  padding: var(--space-md);
-  border-radius: var(--radius);
-  overflow-x: auto;
-  margin-bottom: var(--space-md);
-}
-
-pre code {
-  background: none;
-  padding: 0;
-}
-
 blockquote {
-  border-inline-start: 4px solid var(--color-border);
+  border-inline-start: 4px solid var(--color-accent);
   padding-inline-start: var(--space-md);
   color: var(--color-text-muted);
   font-style: italic;
@@ -188,19 +187,41 @@ blockquote {
 
 main {
   flex: 1 0 auto;
-  padding-block: var(--space-xl);
 }
 
-/* ---------- Accessibility: skip link ---------- */
+.section {
+  padding-block: var(--space-2xl);
+}
+
+.section--surface {
+  background: var(--color-surface);
+}
+
+.eyebrow {
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.lead {
+  font-size: 1.2rem;
+  color: var(--color-text-muted);
+}
+
+/* ---------- Accessibility ---------- */
 .skip-link {
   position: absolute;
   left: -9999px;
   top: 0;
   z-index: 999;
-  background: var(--color-accent);
+  background: var(--color-secondary);
   color: #fff;
   padding: var(--space-xs) var(--space-sm);
-  border-radius: 0 0 var(--radius) 0;
+  border-radius: 0 0 var(--radius-sm) 0;
 }
 
 .skip-link:focus {
@@ -220,23 +241,175 @@ main {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-link);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
 /* ---------- Buttons ---------- */
 .button {
-  display: inline-block;
-  background: var(--color-accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  background: var(--color-primary);
   color: #fff;
   text-decoration: none;
-  padding: var(--space-xs) var(--space-md);
-  border-radius: var(--radius);
+  padding: 0.7em 1.5em;
+  border-radius: 999px;
   font-weight: 600;
-  transition: opacity 0.15s ease;
+  line-height: 1.2;
+  border: 2px solid var(--color-primary);
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
 
 .button:hover {
   color: #fff;
-  opacity: 0.85;
+  background: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+  transform: translateY(-1px);
+}
+
+.button--ghost {
+  background: transparent;
+  color: var(--color-primary);
+  border-color: currentColor;
+}
+
+.button--ghost:hover {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+.button--accent {
+  background: var(--color-accent);
+  color: var(--color-secondary);
+  border-color: var(--color-accent);
+}
+
+.button--accent:hover {
+  color: var(--color-secondary);
+  background: #0ed3b2;
+  border-color: #0ed3b2;
+}
+
+/* ---------- Cards & grids ---------- */
+.grid {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.grid--2 {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
+}
+
+.grid--3 {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
+}
+
+.card__media {
+  aspect-ratio: 16 / 9;
+  background: var(--color-surface-2);
+  overflow: hidden;
+}
+
+.card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card__body {
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  flex: 1;
+}
+
+.card__title {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.card__title a {
+  text-decoration: none;
+  color: var(--color-secondary);
+}
+
+.card__title a:hover {
+  color: var(--color-primary);
+}
+
+.card__meta {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-primary);
+  background: var(--color-surface);
+  padding: 0.25em 0.7em;
+  border-radius: 999px;
+}
+
+/* ---------- Page header band ---------- */
+.page-hero {
+  background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
+  color: #fff;
+  padding-block: var(--space-2xl);
+}
+
+.page-hero h1 {
+  color: #fff;
+}
+
+.page-hero p {
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 60ch;
+  margin: 0;
+}
+
+/* ---------- Prose (markdown body) ---------- */
+.prose {
+  max-width: var(--content-size);
+}
+
+.prose img {
+  border-radius: var(--radius-sm);
+  margin-block: var(--space-md);
+}
+
+.prose h2 {
+  margin-top: var(--space-lg);
+}
+
+.prose ul,
+.prose ol {
+  margin-bottom: var(--space-md);
+  padding-inline-start: 1.4em;
+}
+
+.prose li {
+  margin-bottom: 0.35em;
 }

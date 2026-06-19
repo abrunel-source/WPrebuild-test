@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const partners = (await getCollection('partners', ({ data }) => !data.draft)).sort(
+  (a, b) => (b.data.grantDate?.valueOf() ?? 0) - (a.data.grantDate?.valueOf() ?? 0)
+);
+---
+
+<BaseLayout title="Our Funders" description="The foundations and partners that make FCCA's work possible.">
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow" style="color:#fff">About</p>
+      <h1>Our Funders &amp; Partners</h1>
+      <p>The foundations and organizations whose support powers our work across Florida.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="grid grid--2">
+        {partners.map((p) => (
+          <article class="card funder">
+            {p.data.logo && (
+              <a class="funder__logo" href={`/funders/${p.id}/`}>
+                <img src={p.data.logo} alt={p.data.title} loading="lazy" />
+              </a>
+            )}
+            <div class="card__body">
+              <h3 class="card__title"><a href={`/funders/${p.id}/`}>{p.data.title}</a></h3>
+              {p.data.mission && <p class="card__meta">{p.data.mission.slice(0, 180)}{p.data.mission.length > 180 ? '…' : ''}</p>}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .funder__logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 16 / 9;
+    padding: var(--space-lg);
+    background: #fff;
+  }
+  .funder__logo img {
+    max-height: 100%;
+    width: auto;
+    object-fit: contain;
+  }
+</style>

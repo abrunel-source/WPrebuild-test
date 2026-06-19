@@ -1,35 +1,151 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const team = (await getCollection('team', ({ data }) => !data.draft))
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 6);
+const partners = await getCollection('partners', ({ data }) => !data.draft);
 ---
 
-<BaseLayout title="About" description="About this site and how it was rebuilt in Astro.">
-  <div class="content">
-    <h1>About</h1>
-    <p>
-      This site was originally a WordPress installation running the
-      <strong>Hello Elementor</strong> theme — a lightweight, minimalist theme
-      designed to pair with the Elementor page builder.
-    </p>
-    <p>
-      It has been rebuilt with <a href="https://astro.build">Astro</a>, a modern
-      framework for content-driven websites. The rebuild preserves the original
-      theme's structure and design language while shipping as fast, static HTML.
-    </p>
+<BaseLayout title="About" description="The story of Florida Clinicians for Climate Action.">
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow" style="color:#fff">About Us</p>
+      <h1>Our Story</h1>
+      <p>
+        We launched Florida Clinicians for Climate Action in 2018, because we realized we
+        could overcome our challenges far more effectively by working together.
+      </p>
+    </div>
+  </section>
 
-    <h2>What carried over</h2>
-    <ul>
-      <li>The header with a primary navigation menu and an accessible mobile toggle.</li>
-      <li>The footer with a secondary navigation menu and copyright.</li>
-      <li>The 800px content width and 1200px wide layout from <code>theme.json</code>.</li>
-      <li>Clean, system-font typography and a skip-to-content link.</li>
-      <li>A blog with archive and single-post views.</li>
-    </ul>
+  <section class="section">
+    <div class="content">
+      <p class="lead">
+        As clinicians in Florida, we educate and engage other Florida clinicians to protect
+        communities against the health harms of climate change. We also advocate for
+        equitable public health solutions.
+      </p>
+      <p>
+        FCCA grew out of a shared conviction: clinicians are trusted messengers who play a
+        vital role in protecting public health. By educating one another, building community,
+        and advocating for just policy, we can help Florida's communities — especially the
+        most vulnerable — adapt to a changing climate.
+      </p>
+    </div>
+  </section>
 
-    <h2>How to edit content</h2>
-    <p>
-      Blog posts live as Markdown files in <code>src/content/blog/</code>. The site
-      menus and identity are configured in <code>src/data/site.ts</code>, and the
-      design tokens live in <code>src/styles/global.css</code>.
-    </p>
-  </div>
+  <section class="section section--surface">
+    <div class="content">
+      <p class="eyebrow">Symposium</p>
+      <h2>2018 Climate &amp; Health Equity Symposium</h2>
+      <p>
+        The 2018 Climate &amp; Health Equity Symposium educated over 100 clinicians — primarily
+        physicians of color — on addressing the health effects of climate change in low-income
+        Floridians. At the conclusion of the symposium, a breakout session of about 30
+        physicians agreed to create what became Florida Clinicians for Climate Action.
+      </p>
+      <p><a class="button" href="/contact/">Join us</a></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <header class="section-head section-head--row">
+        <div>
+          <p class="eyebrow">Our leaders</p>
+          <h2>The Leadership Team</h2>
+        </div>
+        <a class="button button--ghost" href="/team/">Meet the team</a>
+      </header>
+      <div class="grid grid--3">
+        {team.map((member) => (
+          <a class="card team-card" href={`/team/${member.id}/`}>
+            {member.data.photo && (
+              <span class="team-card__photo"><img src={member.data.photo} alt={member.data.title} loading="lazy" /></span>
+            )}
+            <span class="card__body">
+              <span class="card__title">{member.data.title}</span>
+              {member.data.role && <span class="team-card__role">{member.data.role}</span>}
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {partners.length > 0 && (
+    <section class="section section--surface">
+      <div class="container">
+        <header class="section-head section-head--row">
+          <div>
+            <p class="eyebrow">Partners</p>
+            <h2>Our Funders</h2>
+          </div>
+          <a class="button button--ghost" href="/funders/">View all</a>
+        </header>
+        <div class="grid grid--3 funder-logos">
+          {partners.map((p) => p.data.logo && (
+            <a class="funder-logo-link" href={`/funders/${p.id}/`}>
+              <img src={p.data.logo} alt={p.data.title} loading="lazy" />
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
 </BaseLayout>
+
+<style>
+  .section-head--row {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-xl);
+  }
+  .team-card {
+    text-decoration: none;
+    color: inherit;
+    text-align: center;
+  }
+  .team-card__photo {
+    display: block;
+    aspect-ratio: 1 / 1;
+    background: var(--color-surface-2);
+    overflow: hidden;
+  }
+  .team-card__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .team-card .card__body {
+    align-items: center;
+  }
+  .team-card__role {
+    color: var(--color-primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .funder-logos {
+    align-items: center;
+  }
+  .funder-logo-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-lg);
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    aspect-ratio: 16 / 9;
+  }
+  .funder-logo-link img {
+    max-height: 100%;
+    width: auto;
+    object-fit: contain;
+  }
+</style>

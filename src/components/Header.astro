@@ -1,7 +1,7 @@
 ---
 /**
- * Site header — equivalent of Hello Elementor's template-parts/header.php
- * (site branding + primary nav "menu-1", with an accessible mobile toggle).
+ * Site header — primary nav with dropdowns + Donate CTA.
+ * Mirrors the WordPress "main" menu (Header Elementor template).
  */
 import { site, headerMenu } from '../data/site';
 
@@ -15,18 +15,9 @@ function isActive(href: string) {
 
 <header class="site-header">
   <div class="container site-header__inner">
-    <div class="site-branding">
-      {site.logo ? (
-        <a href="/" class="site-logo" rel="home">
-          <img src={site.logo} alt={site.title} />
-        </a>
-      ) : (
-        <div class="site-titles">
-          <p class="site-title"><a href="/" rel="home">{site.title}</a></p>
-          {site.tagline && <p class="site-tagline">{site.tagline}</p>}
-        </div>
-      )}
-    </div>
+    <a href="/" class="site-logo" rel="home" aria-label={site.title}>
+      <img src={site.logo} alt={site.title} width="180" height="60" />
+    </a>
 
     <button
       class="menu-toggle"
@@ -42,25 +33,65 @@ function isActive(href: string) {
     <nav id="site-navigation" class="site-navigation" aria-label="Main">
       <ul class="nav-menu" role="list">
         {headerMenu.map((item) => (
-          <li>
+          <li class={item.children ? 'has-children' : undefined}>
             <a
               href={item.href}
               aria-current={isActive(item.href) ? 'page' : undefined}
               class={isActive(item.href) ? 'is-active' : undefined}
             >
               {item.label}
+              {item.children && <span class="caret" aria-hidden="true">▾</span>}
             </a>
+            {item.children && (
+              <ul class="submenu" role="list">
+                {item.children.map((child) => (
+                  <li>
+                    <a href={child.href} aria-current={isActive(child.href) ? 'page' : undefined}>
+                      {child.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
           </li>
         ))}
+        <li class="nav-cta">
+          <a class="button button--accent" href={site.donateUrl} target="_blank" rel="noopener">
+            Donate
+          </a>
+        </li>
       </ul>
     </nav>
   </div>
 </header>
 
+<script>
+  const toggle = document.querySelector('.menu-toggle');
+  const nav = document.getElementById('site-navigation');
+  toggle?.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!open));
+    nav?.classList.toggle('is-open', !open);
+  });
+  // Mobile: tapping a parent label opens its submenu instead of navigating.
+  document.querySelectorAll('.has-children > a').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      if (window.matchMedia('(max-width: 980px)').matches) {
+        e.preventDefault();
+        a.parentElement?.classList.toggle('submenu-open');
+      }
+    });
+  });
+</script>
+
 <style>
   .site-header {
-    border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
     background: var(--color-background);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
   }
 
   .site-header__inner {
@@ -68,51 +99,79 @@ function isActive(href: string) {
     align-items: center;
     justify-content: space-between;
     gap: var(--space-md);
-    padding-block: var(--space-md);
+    padding-block: 0.75rem;
   }
 
-  .site-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 0;
-    line-height: 1.1;
+  .site-logo {
+    flex-shrink: 0;
   }
-
-  .site-title a {
-    color: var(--color-accent);
-    text-decoration: none;
-  }
-
-  .site-tagline {
-    margin: 0;
-    font-size: 0.9rem;
-    color: var(--color-text-muted);
-  }
-
   .site-logo img {
-    max-height: 60px;
+    height: 52px;
     width: auto;
   }
 
   .site-navigation .nav-menu {
     display: flex;
     align-items: center;
-    gap: var(--space-md);
+    gap: 0.35rem;
     list-style: none;
     margin: 0;
     padding: 0;
   }
 
+  .nav-menu > li {
+    position: relative;
+  }
+
   .nav-menu a {
-    color: var(--color-text);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25em;
+    color: var(--color-secondary);
     text-decoration: none;
     font-weight: 500;
-    padding-block: var(--space-xs);
+    font-size: 0.95rem;
+    padding: 0.5rem 0.7rem;
+    border-radius: var(--radius-sm);
   }
 
   .nav-menu a:hover,
   .nav-menu a.is-active {
-    color: var(--color-link);
+    color: var(--color-primary);
+    background: var(--color-surface);
+  }
+
+  .caret {
+    font-size: 0.7em;
+  }
+
+  .submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 200px;
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+    padding: 0.4rem;
+    list-style: none;
+    margin: 0;
+    display: none;
+  }
+
+  .has-children:hover > .submenu,
+  .has-children:focus-within > .submenu {
+    display: block;
+  }
+
+  .submenu a {
+    display: block;
+    font-size: 0.9rem;
+  }
+
+  .nav-cta .button {
+    color: var(--color-secondary);
   }
 
   .menu-toggle {
@@ -125,7 +184,7 @@ function isActive(href: string) {
     padding: 0;
     background: none;
     border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+    border-radius: var(--radius-sm);
     cursor: pointer;
   }
 
@@ -134,7 +193,7 @@ function isActive(href: string) {
     width: 22px;
     height: 2px;
     margin-inline: auto;
-    background: var(--color-text);
+    background: var(--color-secondary);
     transition: transform 0.2s ease, opacity 0.2s ease;
   }
 
@@ -148,7 +207,7 @@ function isActive(href: string) {
     transform: translateY(-7px) rotate(-45deg);
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 980px) {
     .menu-toggle {
       display: flex;
     }
@@ -157,13 +216,12 @@ function isActive(href: string) {
       position: absolute;
       inset-inline: 0;
       top: 100%;
-      background: var(--color-background);
+      background: #fff;
       border-bottom: 1px solid var(--color-border);
+      box-shadow: var(--shadow);
       display: none;
-    }
-
-    .site-header__inner {
-      position: relative;
+      max-height: 80vh;
+      overflow-y: auto;
     }
 
     .site-navigation.is-open {
@@ -174,42 +232,30 @@ function isActive(href: string) {
       flex-direction: column;
       align-items: stretch;
       gap: 0;
-      padding: var(--space-sm) var(--space-md);
+      padding: var(--space-sm);
     }
 
-    .nav-menu li {
+    .nav-menu > li {
       border-top: 1px solid var(--color-border);
     }
-
-    .nav-menu li:first-child {
+    .nav-menu > li:first-child {
       border-top: none;
     }
 
-    .nav-menu a {
+    .submenu {
+      position: static;
+      display: none;
+      box-shadow: none;
+      border: none;
+      padding-inline-start: var(--space-md);
+    }
+
+    .submenu-open > .submenu {
       display: block;
-      padding-block: var(--space-sm);
+    }
+
+    .nav-cta {
+      margin-top: var(--space-sm);
     }
   }
 </style>
-
-<script>
-  // Accessible mobile menu toggle (vanilla JS, like Hello Elementor 3.x).
-  const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
-  const nav = document.getElementById('site-navigation');
-
-  if (toggle && nav) {
-    toggle.addEventListener('click', () => {
-      const isOpen = nav.classList.toggle('is-open');
-      toggle.setAttribute('aria-expanded', String(isOpen));
-    });
-
-    // Close on Escape for keyboard users.
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && nav.classList.contains('is-open')) {
-        nav.classList.remove('is-open');
-        toggle.setAttribute('aria-expanded', 'false');
-        toggle.focus();
-      }
-    });
-  }
-</script>

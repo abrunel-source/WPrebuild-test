@@ -1,0 +1,6 @@
+---
+title: "FCCA June 2024 Newsletter"
+date: "2024-07-29"
+externalUrl: "https://us4.campaign-archive.com/?u=29f1ab1524abcbca1eaf95e60&amp;id=6e55f76099"
+image: "/media/2024/03/fcca-default.png"
+---

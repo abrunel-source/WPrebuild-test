@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const news = (await getCollection('news', ({ data }) => !data.draft)).sort(
+  (a, b) => (b.data.date?.valueOf() ?? 0) - (a.data.date?.valueOf() ?? 0)
+);
+---
+
+<BaseLayout title="News" description="FCCA in the press, press releases, and climate-and-health news.">
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow" style="color:#fff">Mentions</p>
+      <h1>News &amp; Press</h1>
+      <p>Climate change in the press, FCCA press releases, and stories that matter.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <p style="margin-bottom:var(--space-lg)">
+        Looking for our monthly updates? <a href="/newsletters/">Browse the newsletter archive →</a>
+      </p>
+      <div class="grid grid--3">
+        {news.map((n) => (
+          <article class="card">
+            {n.data.image && (
+              <a class="card__media" href={`/news/${n.id}/`}>
+                <img src={n.data.image} alt={n.data.title} loading="lazy" />
+              </a>
+            )}
+            <div class="card__body">
+              <span class="tag">{n.data.category}</span>
+              <h3 class="card__title"><a href={`/news/${n.id}/`}>{n.data.title}</a></h3>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

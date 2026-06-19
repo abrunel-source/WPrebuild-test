@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const resources = await getCollection('resources', ({ data }) => !data.draft);
+  return resources.map((r) => ({ params: { slug: r.id }, props: { resource: r } }));
+}
+
+const { resource } = Astro.props;
+const { title, image, document, externalUrl, youtube, soundcloud } = resource.data;
+const { Content } = await render(resource);
+
+// Normalize a YouTube watch/short URL to an embeddable form.
+function ytEmbed(url: string) {
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]{11})/);
+  return m ? `https://www.youtube.com/embed/${m[1]}` : null;
+}
+const yt = youtube ? ytEmbed(youtube) : null;
+---
+
+<BaseLayout title={title} image={image}>
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow" style="color:#fff"><a href="/education/" style="color:#fff">Education</a></p>
+      <h1>{title}</h1>
+    </div>
+  </section>
+
+  <article class="section">
+    <div class="content">
+      {yt && (
+        <div class="video">
+          <iframe src={yt} title={title} allowfullscreen loading="lazy"></iframe>
+        </div>
+      )}
+      {!yt && image && <img class="resource-banner" src={image} alt={title} />}
+
+      <div class="resource-actions">
+        {document && (
+          <a class="button" href={document} target="_blank" rel="noopener">Download / View document</a>
+        )}
+        {externalUrl && (
+          <a class="button button--ghost" href={externalUrl} target="_blank" rel="noopener">Visit resource ↗</a>
+        )}
+        {soundcloud && (
+          <a class="button button--ghost" href={soundcloud} target="_blank" rel="noopener">Listen ↗</a>
+        )}
+      </div>
+
+      <div class="prose"><Content /></div>
+      <p style="margin-top:var(--space-xl)"><a href="/education/">← Back to Education</a></p>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .resource-banner {
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--space-lg);
+  }
+  .video {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    margin-bottom: var(--space-lg);
+  }
+  .video iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: var(--radius);
+  }
+  .resource-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+  }
+</style>

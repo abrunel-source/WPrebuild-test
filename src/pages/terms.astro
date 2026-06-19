@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getEntry, render } from 'astro:content';
+
+const entry = await getEntry('pages', 'terms-and-conditions');
+const { Content } = entry ? await render(entry) : { Content: null };
+---
+
+<BaseLayout title="Terms & Conditions" description="Terms and conditions for using floridaclinicians.org.">
+  <section class="page-hero">
+    <div class="container"><h1>Terms &amp; Conditions</h1></div>
+  </section>
+  <article class="section">
+    <div class="content prose">
+      {Content ? <Content /> : <p>Terms content is being migrated.</p>}
+    </div>
+  </article>
+</BaseLayout>
