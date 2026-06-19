@@ -1,0 +1,95 @@
+---
+/**
+ * A single entry in the archive loop — equivalent of the markup inside
+ * template-parts/archive.php's `while ( have_posts() )` loop.
+ */
+import FormattedDate from './FormattedDate.astro';
+
+interface Props {
+  href: string;
+  title: string;
+  description: string;
+  pubDate: Date;
+  author?: string;
+  tags?: string[];
+}
+
+const { href, title, description, pubDate, author, tags = [] } = Astro.props;
+---
+
+<article class="post-card">
+  <h2 class="post-card__title">
+    <a href={href}>{title}</a>
+  </h2>
+
+  <p class="post-card__meta">
+    <FormattedDate date={pubDate} />
+    {author && <span> · by {author}</span>}
+  </p>
+
+  <p class="post-card__excerpt">{description}</p>
+
+  {tags.length > 0 && (
+    <ul class="post-card__tags" role="list">
+      {tags.map((tag) => (
+        <li class="tag">{tag}</li>
+      ))}
+    </ul>
+  )}
+
+  <p><a class="read-more" href={href}>Read more →</a></p>
+</article>
+
+<style>
+  .post-card {
+    padding-block: var(--space-lg);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .post-card__title {
+    margin-bottom: var(--space-xs);
+    font-size: 1.75rem;
+  }
+
+  .post-card__title a {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .post-card__title a:hover {
+    color: var(--color-link);
+  }
+
+  .post-card__meta {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    margin-bottom: var(--space-sm);
+  }
+
+  .post-card__excerpt {
+    margin-bottom: var(--space-sm);
+  }
+
+  .post-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--space-sm);
+  }
+
+  .tag {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: 0.15rem 0.7rem;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+  }
+
+  .read-more {
+    font-weight: 600;
+    text-decoration: none;
+  }
+</style>

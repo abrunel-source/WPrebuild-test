@@ -1,0 +1,129 @@
+---
+/**
+ * Search — equivalent of template-parts/search.php.
+ *
+ * Static sites have no server-side query, so this renders the full post list
+ * and filters it client-side by title, description, and tags.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .map((post) => ({
+    href: `/blog/${post.id}/`,
+    title: post.data.title,
+    description: post.data.description,
+    tags: post.data.tags,
+  }));
+---
+
+<BaseLayout title="Search" description="Search the site.">
+  <div class="content">
+    <h1>Search</h1>
+
+    <form class="search-form" role="search" onsubmit="return false">
+      <label class="screen-reader-text" for="search-input">Search for…</label>
+      <input
+        id="search-input"
+        type="search"
+        placeholder="Search posts…"
+        autocomplete="off"
+        autofocus
+      />
+    </form>
+
+    <p id="search-status" class="search-status">{posts.length} posts</p>
+
+    <ul id="search-results" class="search-results" role="list">
+      {posts.map((post) => (
+        <li
+          class="search-result"
+          data-title={post.title.toLowerCase()}
+          data-description={post.description.toLowerCase()}
+          data-tags={post.tags.join(' ').toLowerCase()}
+        >
+          <h2><a href={post.href}>{post.title}</a></h2>
+          <p>{post.description}</p>
+        </li>
+      ))}
+    </ul>
+
+    <p id="no-results" class="no-results" hidden>No posts matched your search.</p>
+  </div>
+</BaseLayout>
+
+<style>
+  .search-form input {
+    width: 100%;
+    max-width: 32rem;
+    padding: var(--space-sm);
+    font-size: 1.1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+  }
+
+  .search-status {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    margin-block: var(--space-md);
+  }
+
+  .search-results {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  .search-result h2 {
+    font-size: 1.4rem;
+    margin-bottom: var(--space-xs);
+  }
+
+  .search-result h2 a {
+    text-decoration: none;
+    color: var(--color-accent);
+  }
+
+  .search-result h2 a:hover {
+    color: var(--color-link);
+  }
+</style>
+
+<script>
+  const input = document.getElementById('search-input') as HTMLInputElement | null;
+  const results = Array.from(
+    document.querySelectorAll<HTMLLIElement>('.search-result')
+  );
+  const status = document.getElementById('search-status');
+  const noResults = document.getElementById('no-results');
+  const total = results.length;
+
+  // Support a ?q= query param so links can deep-link into a search.
+  const params = new URLSearchParams(window.location.search);
+  const initial = params.get('q') ?? '';
+  if (input && initial) input.value = initial;
+
+  function filter(query: string) {
+    const q = query.trim().toLowerCase();
+    let visible = 0;
+
+    for (const item of results) {
+      const haystack = `${item.dataset.title} ${item.dataset.description} ${item.dataset.tags}`;
+      const match = q === '' || haystack.includes(q);
+      item.hidden = !match;
+      if (match) visible++;
+    }
+
+    if (status) {
+      status.textContent =
+        q === '' ? `${total} posts` : `${visible} of ${total} posts`;
+    }
+    if (noResults) noResults.hidden = visible !== 0;
+  }
+
+  input?.addEventListener('input', () => filter(input.value));
+  if (initial) filter(initial);
+</script>

@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Contact" description="Get in touch.">
+  <div class="content">
+    <h1>Contact</h1>
+    <p>
+      Have a question or want to get in touch? Fill out the form below. This is a
+      static demo form — wire the <code>action</code> up to a form backend
+      (such as Formspree, Netlify Forms, or your own endpoint) to receive
+      submissions.
+    </p>
+
+    <form class="contact-form" action="#" method="post">
+      <div class="field">
+        <label for="name">Name</label>
+        <input id="name" name="name" type="text" required />
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required />
+      </div>
+      <div class="field">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="6" required></textarea>
+      </div>
+      <button class="button" type="submit">Send message</button>
+    </form>
+  </div>
+</BaseLayout>
+
+<style>
+  .contact-form {
+    display: grid;
+    gap: var(--space-md);
+    max-width: 32rem;
+  }
+
+  .field {
+    display: grid;
+    gap: var(--space-xs);
+  }
+
+  label {
+    font-weight: 600;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    padding: var(--space-xs) var(--space-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-background);
+  }
+
+  button {
+    justify-self: start;
+    border: none;
+    cursor: pointer;
+  }
+</style>

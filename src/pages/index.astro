@@ -1,0 +1,88 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+import { site } from '../data/site';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 2);
+---
+
+<BaseLayout>
+  <section class="hero">
+    <div class="content">
+      <h1>{site.title}</h1>
+      <p class="hero__tagline">{site.tagline}</p>
+      <p class="hero__lead">
+        This is the homepage of a site originally built on WordPress with the
+        Hello Elementor theme, faithfully rebuilt as a fast, static Astro site —
+        same structure and design system, none of the database.
+      </p>
+      <p>
+        <a class="button" href="/blog/">Read the blog</a>
+        <a class="button button--ghost" href="/about/">About this project</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="container latest">
+    <h2>Latest posts</h2>
+    {posts.map((post) => (
+      <PostCard
+        href={`/blog/${post.id}/`}
+        title={post.data.title}
+        description={post.data.description}
+        pubDate={post.data.pubDate}
+        author={post.data.author}
+        tags={post.data.tags}
+      />
+    ))}
+    <p style="margin-top: var(--space-lg)">
+      <a class="read-more" href="/blog/">View all posts →</a>
+    </p>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    padding-block: var(--space-xl);
+    margin-block: calc(-1 * var(--space-xl)) var(--space-xl);
+    text-align: center;
+  }
+
+  .hero__tagline {
+    font-size: 1.25rem;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-md);
+  }
+
+  .hero__lead {
+    max-width: 60ch;
+    margin-inline: auto;
+    margin-bottom: var(--space-lg);
+  }
+
+  .button--ghost {
+    background: transparent;
+    color: var(--color-accent);
+    border: 1px solid var(--color-border);
+    margin-inline-start: var(--space-xs);
+  }
+
+  .button--ghost:hover {
+    color: var(--color-accent);
+    background: var(--color-background);
+  }
+
+  .latest h2 {
+    margin-bottom: 0;
+  }
+
+  .read-more {
+    font-weight: 600;
+    text-decoration: none;
+  }
+</style>

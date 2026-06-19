@@ -1,0 +1,68 @@
+---
+/**
+ * Site footer — equivalent of Hello Elementor's footer location
+ * (footer nav "menu-2" + copyright).
+ */
+import { site, footerMenu } from '../data/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <nav class="footer-navigation" aria-label="Footer">
+      <ul class="footer-menu" role="list">
+        {footerMenu.map((item) => (
+          <li><a href={item.href}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <p class="site-info">
+      &copy; {year} {site.title}. Built with <a href="https://astro.build">Astro</a>.
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--color-border);
+    background: var(--color-surface);
+    padding-block: var(--space-lg);
+    margin-top: var(--space-xl);
+  }
+
+  .site-footer__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+    text-align: center;
+  }
+
+  .footer-menu {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-md);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .footer-menu a {
+    color: var(--color-text);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .footer-menu a:hover {
+    color: var(--color-link);
+  }
+
+  .site-info {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+  }
+</style>

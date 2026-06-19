@@ -1,0 +1,42 @@
+---
+/**
+ * 404 page — equivalent of template-parts/404.php.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Page not found" description="The page you were looking for could not be found.">
+  <div class="content not-found">
+    <h1>404</h1>
+    <h2>Page not found</h2>
+    <p>Sorry, the page you were looking for doesn't exist or may have moved.</p>
+    <p>
+      <a class="button" href="/">Back to home</a>
+      <a class="button button--ghost" href="/blog/">Browse the blog</a>
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .not-found {
+    text-align: center;
+    padding-block: var(--space-xl);
+  }
+
+  .not-found h1 {
+    font-size: clamp(4rem, 15vw, 8rem);
+    margin-bottom: 0;
+    color: var(--color-text-muted);
+  }
+
+  .button--ghost {
+    background: transparent;
+    color: var(--color-accent);
+    border: 1px solid var(--color-border);
+    margin-inline-start: var(--space-xs);
+  }
+
+  .button--ghost:hover {
+    color: var(--color-accent);
+  }
+</style>

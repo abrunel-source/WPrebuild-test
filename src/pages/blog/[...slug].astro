@@ -1,0 +1,109 @@
+---
+/**
+ * Single post — equivalent of template-parts/single.php.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: post,
+  }));
+}
+
+const post = Astro.props;
+const { Content } = await render(post);
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <article class="content single">
+    <header class="single__header">
+      <h1>{post.data.title}</h1>
+      <p class="single__meta">
+        <FormattedDate date={post.data.pubDate} />
+        {post.data.author && <span> · by {post.data.author}</span>}
+        {post.data.updatedDate && (
+          <span class="updated"> · updated <FormattedDate date={post.data.updatedDate} /></span>
+        )}
+      </p>
+    </header>
+
+    <div class="single__content">
+      <Content />
+    </div>
+
+    {post.data.tags.length > 0 && (
+      <footer class="single__footer">
+        <ul class="post-tags" role="list">
+          {post.data.tags.map((tag) => (
+            <li class="tag">{tag}</li>
+          ))}
+        </ul>
+      </footer>
+    )}
+
+    <p><a class="read-more" href="/blog/">← Back to blog</a></p>
+  </article>
+</BaseLayout>
+
+<style>
+  .single__header {
+    margin-bottom: var(--space-lg);
+  }
+
+  .single__meta {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+  }
+
+  .single__content :global(h2) {
+    margin-top: var(--space-lg);
+  }
+
+  .single__content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: var(--space-md);
+  }
+
+  .single__content :global(th),
+  .single__content :global(td) {
+    border: 1px solid var(--color-border);
+    padding: var(--space-xs) var(--space-sm);
+    text-align: start;
+  }
+
+  .single__content :global(th) {
+    background: var(--color-surface);
+  }
+
+  .single__footer {
+    margin-block: var(--space-lg);
+  }
+
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .tag {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: 0.15rem 0.7rem;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+  }
+
+  .read-more {
+    font-weight: 600;
+    text-decoration: none;
+  }
+</style>

@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="About" description="About this site and how it was rebuilt in Astro.">
+  <div class="content">
+    <h1>About</h1>
+    <p>
+      This site was originally a WordPress installation running the
+      <strong>Hello Elementor</strong> theme — a lightweight, minimalist theme
+      designed to pair with the Elementor page builder.
+    </p>
+    <p>
+      It has been rebuilt with <a href="https://astro.build">Astro</a>, a modern
+      framework for content-driven websites. The rebuild preserves the original
+      theme's structure and design language while shipping as fast, static HTML.
+    </p>
+
+    <h2>What carried over</h2>
+    <ul>
+      <li>The header with a primary navigation menu and an accessible mobile toggle.</li>
+      <li>The footer with a secondary navigation menu and copyright.</li>
+      <li>The 800px content width and 1200px wide layout from <code>theme.json</code>.</li>
+      <li>Clean, system-font typography and a skip-to-content link.</li>
+      <li>A blog with archive and single-post views.</li>
+    </ul>
+
+    <h2>How to edit content</h2>
+    <p>
+      Blog posts live as Markdown files in <code>src/content/blog/</code>. The site
+      menus and identity are configured in <code>src/data/site.ts</code>, and the
+      design tokens live in <code>src/styles/global.css</code>.
+    </p>
+  </div>
+</BaseLayout>
