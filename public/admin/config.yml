@@ -1,0 +1,39 @@
+# Decap CMS configuration
+# Editors manage content here at /admin. Saving commits Markdown to the repo,
+# which triggers a rebuild + redeploy so changes appear on the live site.
+
+backend:
+  # `git-gateway` works with Netlify Identity (invite your 2-3 editors by email).
+  # To host elsewhere, switch to the `github` backend + an OAuth app instead.
+  name: git-gateway
+  branch: main # <-- set this to the branch your site deploys from
+
+# Draft -> In review -> Ready. Editors draft; admins do the final publish.
+publish_mode: editorial_workflow
+
+# Image/file uploads land here and are referenced from the site root.
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  # Blog / news posts. (Additional post types from the WP backup get their
+  # own collections here once the export is in.)
+  - name: "blog"
+    label: "Blog Posts"
+    label_singular: "Post"
+    description: "News and articles shown on the site."
+    folder: "src/content/blog"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    sortable_fields: ["pubDate", "title"]
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Description / Excerpt", name: "description", widget: "text" }
+      - { label: "Publish Date", name: "pubDate", widget: "datetime" }
+      - { label: "Updated Date", name: "updatedDate", widget: "datetime", required: false }
+      - { label: "Author", name: "author", widget: "string", default: "FCCA" }
+      - { label: "Tags", name: "tags", widget: "list", required: false }
+      - { label: "Draft", name: "draft", widget: "boolean", default: false }
+      - { label: "Body", name: "body", widget: "markdown" }
