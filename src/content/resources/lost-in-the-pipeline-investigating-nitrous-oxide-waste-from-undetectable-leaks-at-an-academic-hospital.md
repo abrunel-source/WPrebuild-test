@@ -2,6 +2,7 @@
 title: "Lost in the Pipeline: Investigating Nitrous Oxide Waste from Undetectable Leaks at an Academic Hospital"
 document: "/media/2025/10/ASA-Scientific-Abstract.pdf"
 date: "2025-10-30"
+categories: ["Education and Outreach", "Reports"]
 ---
 
 **Taylor Carto, BS**, Anh Le, MD, Veronica Zoghbi, MD, Nirav Bhavsar, MD, Arman Dagal, MD, Eugene Fu, MD.

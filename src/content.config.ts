@@ -23,6 +23,7 @@ const events = defineCollection({
     date: z.coerce.date().optional(),
     time: z.string().optional(),
     location: z.string().optional(),
+    region: z.string().optional(),
     registrationUrl: z.string().optional(),
     registrationText: z.string().default('Register'),
     image: z.string().optional(),
@@ -53,6 +54,7 @@ const resources = defineCollection({
     externalUrl: z.string().optional(),
     youtube: z.string().optional(),
     soundcloud: z.string().optional(),
+    categories: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
   }),
 });
@@ -65,6 +67,7 @@ const partners = defineCollection({
     mission: z.string().optional(),
     grantDate: z.coerce.date().optional(),
     amount: z.string().optional(),
+    status: z.string().default('Active'),
     draft: z.boolean().default(false),
   }),
 });

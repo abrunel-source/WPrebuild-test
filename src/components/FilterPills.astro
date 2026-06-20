@@ -1,0 +1,76 @@
+---
+/**
+ * Client-side filter pills for archive pages (Education resource-type,
+ * Events region, Funders grant-status). Mirrors the JetSmartFilters pills on
+ * the original site.
+ *
+ * Usage: wrap the pills + the grid in an element with class `filterable`.
+ * Give each card `data-tags="A|B"` (pipe-joined). Pills filter by matching a
+ * tag; the "All" pill (data-filter="*") shows everything.
+ */
+interface Props {
+  filters: string[];
+  allLabel?: string;
+}
+const { filters, allLabel = 'All' } = Astro.props;
+---
+
+<div class="filter-bar" role="tablist">
+  <button class="filter-pill is-active" data-filter="*" role="tab" aria-selected="true">{allLabel}</button>
+  {filters.map((f) => (
+    <button class="filter-pill" data-filter={f} role="tab" aria-selected="false">{f}</button>
+  ))}
+</div>
+
+<style>
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-bottom: var(--space-xl);
+  }
+  .filter-pill {
+    border: 1px solid var(--color-border);
+    background: #fff;
+    color: var(--color-secondary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.45em 1.1em;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .filter-pill:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+  .filter-pill.is-active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
+  }
+</style>
+
+<script>
+  // Scope each filter bar to its own `.filterable` container.
+  document.querySelectorAll('.filterable').forEach((scope) => {
+    const pills = scope.querySelectorAll<HTMLButtonElement>('.filter-pill');
+    const cards = scope.querySelectorAll<HTMLElement>('[data-filterable]');
+    pills.forEach((pill) => {
+      pill.addEventListener('click', () => {
+        const filter = pill.dataset.filter || '*';
+        pills.forEach((p) => {
+          const active = p === pill;
+          p.classList.toggle('is-active', active);
+          p.setAttribute('aria-selected', String(active));
+        });
+        cards.forEach((card) => {
+          const tags = (card.dataset.tags || '').split('|');
+          const show = filter === '*' || tags.includes(filter);
+          card.style.display = show ? '' : 'none';
+        });
+      });
+    });
+  });
+</script>

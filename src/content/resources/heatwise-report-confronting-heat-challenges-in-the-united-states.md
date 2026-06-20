@@ -4,6 +4,7 @@ document: "/media/2025/01/confronting-heat-challenges.pdf"
 externalUrl: "https://nicholasinstitute.duke.edu/articles/three-key-takeaways-confronting-heat-challenges-united-states"
 image: "/media/2025/01/Screenshot-2025-01-18-at-4.29.49PM.png"
 date: "2025-01-18"
+categories: []
 ---
 
 Longer and more intense heat seasons in the United States are increasingly posing risks to human health and taking a toll on regional economies. A “brain trust” of leaders from across the country has released findings that could inform efforts to better protect vulnerable communities from extreme heat.

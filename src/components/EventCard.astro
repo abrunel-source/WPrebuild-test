@@ -5,7 +5,7 @@ interface Props {
   event: CollectionEntry<'events'>;
 }
 const { event } = Astro.props;
-const { title, date, time, location } = event.data;
+const { title, date, time, location, region } = event.data;
 
 const dateLabel = date
   ? date.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' })
@@ -16,7 +16,7 @@ const isCoords = location && /^-?\d+(\.\d+)?,\s*-?\d+(\.\d+)?$/.test(location.tr
 const place = location && !isCoords ? location : null;
 ---
 
-<article class="event-card">
+<article class="event-card" data-filterable data-tags={region ?? ''}>
   <h3 class="event-card__title"><a href={`/events/${event.id}/`}>{title}</a></h3>
   <div class="event-card__pills">
     {dateLabel && <span class="pill pill--date">{dateLabel}</span>}

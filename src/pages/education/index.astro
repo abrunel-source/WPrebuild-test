@@ -1,10 +1,16 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import FilterPills from '../../components/FilterPills.astro';
 import { getCollection } from 'astro:content';
 
 const resources = (await getCollection('resources', ({ data }) => !data.draft)).sort(
   (a, b) => (b.data.date?.valueOf() ?? 0) - (a.data.date?.valueOf() ?? 0)
 );
+
+// Filter pills in the order the live site shows them.
+const order = ['Climate Change 101', 'Education and Outreach', 'Heat and Health', 'Reports', 'Webinars'];
+const used = new Set(resources.flatMap((r) => r.data.categories));
+const filters = order.filter((c) => used.has(c));
 ---
 
 <BaseLayout title="Education" description="CMEs, lectures, reports, and climate-and-health resources for clinicians.">
@@ -13,10 +19,11 @@ const resources = (await getCollection('resources', ({ data }) => !data.draft)).
   </section>
 
   <section class="section">
-    <div class="container">
+    <div class="container filterable">
+      <FilterPills filters={filters} />
       <div class="res-grid">
         {resources.map((r) => (
-          <a class="res-card" href={`/resources/${r.id}/`}>
+          <a class="res-card" href={`/resources/${r.id}/`} data-filterable data-tags={r.data.categories.join('|')}>
             <span class="res-card__media">
               {r.data.image && <img src={r.data.image} alt="" loading="lazy" />}
               <span class="res-card__badge">{r.data.title}</span>

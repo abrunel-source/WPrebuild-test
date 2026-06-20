@@ -4,6 +4,7 @@ date: "2025-01-21"
 time: "18:00"
 registrationUrl: "https://register.gotowebinar.com/register/1275396549290319708"
 registrationText: "Register Here"
+region: "Virtual"
 ---
 
 CEU Learning Series #2

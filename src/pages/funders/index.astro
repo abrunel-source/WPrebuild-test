@@ -1,10 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import FilterPills from '../../components/FilterPills.astro';
 import { getCollection } from 'astro:content';
 
 const partners = (await getCollection('partners', ({ data }) => !data.draft)).sort(
   (a, b) => (b.data.grantDate?.valueOf() ?? 0) - (a.data.grantDate?.valueOf() ?? 0)
 );
+const statuses = ['Active', 'Completed'].filter((s) => partners.some((p) => p.data.status === s));
 function grantLabel(d?: Date) {
   return d ? d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }) : '—';
 }
@@ -16,16 +18,17 @@ function grantLabel(d?: Date) {
   </section>
 
   <section class="section">
-    <div class="container">
+    <div class="container filterable">
+      {statuses.length > 1 && <FilterPills filters={statuses} />}
       <div class="grid grid--3">
         {partners.map((p) => (
-          <article class="funder-card">
+          <article class="funder-card" data-filterable data-tags={p.data.status}>
             {p.data.logo && <img class="funder-card__logo" src={p.data.logo} alt={p.data.title} loading="lazy" />}
             <h2 class="funder-card__title">{p.data.title}</h2>
             <dl class="funder-card__meta">
               <div><dt>Grant date</dt><dd>{grantLabel(p.data.grantDate)}</dd></div>
               <div><dt>Amount</dt><dd>{p.data.amount || '—'}</dd></div>
-              <div><dt>Status</dt><dd><span class="status">Active</span></dd></div>
+              <div><dt>Status</dt><dd><span class="status">{p.data.status}</span></dd></div>
             </dl>
             <a class="funder-card__link" href={`/funders/${p.id}/`}>Learn more →</a>
           </article>
