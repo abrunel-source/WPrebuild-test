@@ -3,15 +3,24 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
-  const resources = await getCollection('resources', ({ data }) => !data.draft);
-  return resources.map((r) => ({ params: { slug: r.id }, props: { resource: r } }));
+  const resources = (await getCollection('resources', ({ data }) => !data.draft)).sort(
+    (a, b) => (b.data.date?.valueOf() ?? 0) - (a.data.date?.valueOf() ?? 0)
+  );
+  return resources.map((r, i) => ({
+    params: { slug: r.id },
+    props: {
+      resource: r,
+      prev: resources[i - 1] ?? null,
+      next: resources[i + 1] ?? null,
+      recent: resources.filter((x) => x.id !== r.id).slice(0, 4),
+    },
+  }));
 }
 
-const { resource } = Astro.props;
-const { title, image, document, externalUrl, youtube, soundcloud } = resource.data;
+const { resource, prev, next, recent } = Astro.props;
+const { title, image, document, externalUrl, youtube, soundcloud, categories } = resource.data;
 const { Content } = await render(resource);
 
-// Normalize a YouTube watch/short URL to an embeddable form.
 function ytEmbed(url: string) {
   const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]{11})/);
   return m ? `https://www.youtube.com/embed/${m[1]}` : null;
@@ -21,41 +30,60 @@ const yt = youtube ? ytEmbed(youtube) : null;
 
 <BaseLayout title={title} image={image}>
   <section class="page-hero">
-    <div class="container">
-      <p class="eyebrow" style="color:#fff"><a href="/education/" style="color:#fff">Education</a></p>
-      <h1>{title}</h1>
-    </div>
+    <div class="container"><h1>Resources</h1></div>
   </section>
 
-  <article class="section">
-    <div class="content">
-      {yt && (
-        <div class="video">
-          <iframe src={yt} title={title} allowfullscreen loading="lazy"></iframe>
-        </div>
-      )}
-      {!yt && image && <img class="resource-banner" src={image} alt={title} />}
+  <div class="container res-layout section">
+    <article>
+      {categories.length > 0 && <p class="eyebrow">{categories.join(', ')}</p>}
+      <h2 class="res-title">{title}</h2>
 
-      <div class="resource-actions">
-        {document && (
-          <a class="button" href={document} target="_blank" rel="noopener">Download / View document</a>
-        )}
-        {externalUrl && (
-          <a class="button button--ghost" href={externalUrl} target="_blank" rel="noopener">Visit resource ↗</a>
-        )}
-        {soundcloud && (
-          <a class="button button--ghost" href={soundcloud} target="_blank" rel="noopener">Listen ↗</a>
-        )}
+      {yt && (
+        <div class="video"><iframe src={yt} title={title} allowfullscreen loading="lazy"></iframe></div>
+      )}
+      {!yt && image && <img class="res-banner" src={image} alt={title} />}
+
+      <div class="res-actions">
+        {document && <a class="button" href={document} target="_blank" rel="noopener">Download / View document</a>}
+        {externalUrl && <a class="button button--ghost" href={externalUrl} target="_blank" rel="noopener">Visit resource ↗</a>}
+        {soundcloud && <a class="button button--ghost" href={soundcloud} target="_blank" rel="noopener">Listen ↗</a>}
       </div>
 
       <div class="prose"><Content /></div>
-      <p style="margin-top:var(--space-xl)"><a href="/education/">← Back to Education</a></p>
-    </div>
-  </article>
+
+      <nav class="prevnext" aria-label="Resource navigation">
+        {prev ? <a class="prevnext__link" href={`/resources/${prev.id}/`}>← {prev.data.title}</a> : <span></span>}
+        {next ? <a class="prevnext__link prevnext__link--next" href={`/resources/${next.id}/`}>{next.data.title} →</a> : <span></span>}
+      </nav>
+    </article>
+
+    <aside class="recent">
+      <div class="recent__box">
+        <p class="eyebrow" style="color:var(--color-accent)">Recently added</p>
+        <ul role="list">
+          {recent.map((r) => (
+            <li>
+              <a href={`/resources/${r.id}/`}>{r.data.title}</a>
+            </li>
+          ))}
+        </ul>
+        <a class="button button--accent" href="/education/">All resources</a>
+      </div>
+    </aside>
+  </div>
 </BaseLayout>
 
 <style>
-  .resource-banner {
+  .res-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+  .res-title {
+    margin-bottom: var(--space-md);
+  }
+  .res-banner {
     border-radius: var(--radius);
     box-shadow: var(--shadow-sm);
     margin-bottom: var(--space-lg);
@@ -73,10 +101,62 @@ const yt = youtube ? ytEmbed(youtube) : null;
     border: 0;
     border-radius: var(--radius);
   }
-  .resource-actions {
+  .res-actions {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-sm);
     margin-bottom: var(--space-lg);
+  }
+  .prevnext {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md);
+    margin-top: var(--space-xl);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--color-border);
+    font-weight: 600;
+  }
+  .prevnext__link {
+    text-decoration: none;
+    max-width: 45%;
+  }
+  .prevnext__link--next {
+    text-align: right;
+    margin-inline-start: auto;
+  }
+  .recent__box {
+    background: var(--color-secondary);
+    color: #fff;
+    border-radius: var(--radius);
+    padding: var(--space-lg);
+    position: sticky;
+    top: 90px;
+  }
+  .recent__box ul {
+    list-style: none;
+    margin: 0 0 var(--space-md);
+    padding: 0;
+    display: grid;
+    gap: var(--space-sm);
+  }
+  .recent__box li {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    padding-bottom: var(--space-sm);
+  }
+  .recent__box a {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .recent__box a:hover {
+    color: var(--color-accent);
+  }
+  @media (max-width: 880px) {
+    .res-layout {
+      grid-template-columns: 1fr;
+    }
+    .recent__box {
+      position: static;
+    }
   }
 </style>

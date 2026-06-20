@@ -8,7 +8,7 @@ export async function getStaticPaths() {
 }
 
 const { event } = Astro.props;
-const { title, date, time, location, registrationUrl, registrationText, image, imageAlt } = event.data;
+const { title, date, time, location, region, registrationUrl, registrationText, image, imageAlt } = event.data;
 const { Content } = await render(event);
 
 const dateLabel = date
@@ -20,33 +20,91 @@ const place = location && !isCoords ? location : null;
 
 <BaseLayout title={title} image={image}>
   <section class="page-hero">
-    <div class="container">
-      <p class="eyebrow" style="color:#fff"><a href="/events/" style="color:#fff">Events</a></p>
-      <h1>{title}</h1>
-      {dateLabel && <p>{dateLabel}{time ? ` · ${time}` : ''}{place ? ` · ${place}` : ''}</p>}
-    </div>
+    <div class="container"><h1>Events</h1></div>
   </section>
 
-  <article class="section">
-    <div class="content">
+  <div class="container event-layout section">
+    <article>
+      <h2 class="event-title">{title}</h2>
       {image && <img class="event-banner" src={image} alt={imageAlt || title} />}
-      {registrationUrl && (
-        <p>
+      <div class="prose"><Content /></div>
+      <p style="margin-top:var(--space-xl)"><a href="/events/">← Back to all events</a></p>
+    </article>
+
+    <aside>
+      <div class="event-card-info">
+        {dateLabel && (
+          <div class="event-card-info__row"><dt>Date</dt><dd>{dateLabel}</dd></div>
+        )}
+        {time && <div class="event-card-info__row"><dt>Time</dt><dd>{time}</dd></div>}
+        {place && <div class="event-card-info__row"><dt>Location</dt><dd>{place}</dd></div>}
+        {region && <div class="event-card-info__row"><dt>Region</dt><dd>{region}</dd></div>}
+        {registrationUrl && (
           <a class="button button--accent" href={registrationUrl} target="_blank" rel="noopener">
             {registrationText || 'Register'}
           </a>
-        </p>
-      )}
-      <div class="prose"><Content /></div>
-      <p style="margin-top:var(--space-xl)"><a href="/events/">← Back to all events</a></p>
-    </div>
-  </article>
+        )}
+      </div>
+    </aside>
+  </div>
 </BaseLayout>
 
 <style>
+  .event-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+  .event-title {
+    color: var(--color-primary);
+    margin-bottom: var(--space-md);
+  }
   .event-banner {
     border-radius: var(--radius);
     box-shadow: var(--shadow-sm);
     margin-bottom: var(--space-lg);
+    max-height: 520px;
+    width: auto;
+  }
+  .event-card-info {
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: var(--space-lg);
+    position: sticky;
+    top: 90px;
+    display: grid;
+    gap: var(--space-sm);
+  }
+  .event-card-info__row {
+    display: grid;
+    gap: 0.15rem;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--space-sm);
+  }
+  .event-card-info__row dt {
+    font-weight: 700;
+    color: var(--color-secondary);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .event-card-info__row dd {
+    margin: 0;
+    color: var(--color-text-muted);
+  }
+  .event-card-info .button {
+    margin-top: var(--space-xs);
+    justify-content: center;
+  }
+  @media (max-width: 820px) {
+    .event-layout {
+      grid-template-columns: 1fr;
+    }
+    .event-card-info {
+      position: static;
+    }
   }
 </style>

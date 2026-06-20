@@ -3,11 +3,16 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
-  const news = await getCollection('news', ({ data }) => !data.draft);
-  return news.map((n) => ({ params: { slug: n.id }, props: { item: n } }));
+  const news = (await getCollection('news', ({ data }) => !data.draft)).sort(
+    (a, b) => (b.data.date?.valueOf() ?? 0) - (a.data.date?.valueOf() ?? 0)
+  );
+  return news.map((n, i) => ({
+    params: { slug: n.id },
+    props: { item: n, prev: news[i - 1] ?? null, next: news[i + 1] ?? null },
+  }));
 }
 
-const { item } = Astro.props;
+const { item, prev, next } = Astro.props;
 const { title, category, date, externalUrl, image } = item.data;
 const { Content } = await render(item);
 const dateLabel = date
@@ -35,7 +40,12 @@ const dateLabel = date
         </p>
       )}
       <div class="prose"><Content /></div>
-      <p style="margin-top:var(--space-xl)"><a href="/news/">← Back to News</a></p>
+
+      <nav class="prevnext" aria-label="News navigation">
+        {prev ? <a href={`/news/${prev.id}/`}>← {prev.data.title}</a> : <span></span>}
+        {next ? <a class="prevnext--next" href={`/news/${next.id}/`}>{next.data.title} →</a> : <span></span>}
+      </nav>
+      <p style="margin-top:var(--space-lg)"><a href="/news/">← Back to News</a></p>
     </div>
   </article>
 </BaseLayout>
@@ -45,5 +55,22 @@ const dateLabel = date
     border-radius: var(--radius);
     box-shadow: var(--shadow-sm);
     margin-bottom: var(--space-lg);
+  }
+  .prevnext {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md);
+    margin-top: var(--space-xl);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--color-border);
+    font-weight: 600;
+  }
+  .prevnext a {
+    text-decoration: none;
+    max-width: 45%;
+  }
+  .prevnext--next {
+    text-align: right;
+    margin-inline-start: auto;
   }
 </style>
