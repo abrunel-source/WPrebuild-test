@@ -1,0 +1,78 @@
+---
+/**
+ * Lightweight cookie-consent banner (replaces the WordPress Complianz plugin).
+ * Stores the choice in localStorage; shows once until accepted/declined.
+ * No third-party scripts are loaded by this site, so this is informational
+ * consent — extend the accept handler if you later add analytics.
+ */
+---
+
+<div id="cookie-banner" class="cookie-banner" hidden>
+  <p class="cookie-banner__text">
+    We use minimal cookies to make this site work. By continuing to browse, you agree to our
+    <a href="/privacy/">Privacy Policy</a>.
+  </p>
+  <div class="cookie-banner__actions">
+    <button class="button button--ghost" data-cookie="decline">Decline</button>
+    <button class="button button--accent" data-cookie="accept">Accept</button>
+  </div>
+</div>
+
+<script>
+  const KEY = 'fcca-cookie-consent';
+  const banner = document.getElementById('cookie-banner');
+  if (banner && !localStorage.getItem(KEY)) {
+    banner.hidden = false;
+    banner.querySelectorAll<HTMLButtonElement>('[data-cookie]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        localStorage.setItem(KEY, btn.dataset.cookie || 'accept');
+        banner.hidden = true;
+      });
+    });
+  }
+</script>
+
+<style>
+  .cookie-banner {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 200;
+    background: var(--color-secondary);
+    color: rgba(255, 255, 255, 0.92);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    box-shadow: 0 -6px 24px -12px rgba(0, 0, 0, 0.5);
+  }
+  .cookie-banner__text {
+    margin: 0;
+    font-size: 0.92rem;
+    max-width: 70ch;
+  }
+  .cookie-banner__text a {
+    color: var(--color-accent);
+  }
+  .cookie-banner__actions {
+    display: flex;
+    gap: var(--space-sm);
+    flex-shrink: 0;
+  }
+  .cookie-banner .button--ghost {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+  @media (max-width: 600px) {
+    .cookie-banner {
+      flex-direction: column;
+      align-items: stretch;
+      text-align: center;
+    }
+    .cookie-banner__actions {
+      justify-content: center;
+    }
+  }
+</style>

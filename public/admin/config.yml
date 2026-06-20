@@ -122,6 +122,18 @@ collections:
       - { label: "Grant Date", name: "grantDate", widget: "datetime", required: false }
       - { label: "Amount", name: "amount", widget: "string", required: false }
       - { label: "Status", name: "status", widget: "select", default: "Active", options: ["Active", "Completed"] }
+      - label: "Gallery"
+        name: "gallery"
+        widget: "list"
+        required: false
+        field: { label: "Image", name: "image", widget: "image" }
+      - label: "Progress milestones"
+        name: "progress"
+        widget: "list"
+        required: false
+        fields:
+          - { label: "Date", name: "date", widget: "string" }
+          - { label: "Description", name: "text", widget: "text" }
       - { label: "Draft", name: "draft", widget: "boolean", default: false }
       - { label: "Body", name: "body", widget: "markdown", required: false }
 

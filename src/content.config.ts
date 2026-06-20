@@ -68,6 +68,8 @@ const partners = defineCollection({
     grantDate: z.coerce.date().optional(),
     amount: z.string().optional(),
     status: z.string().default('Active'),
+    gallery: z.array(z.string()).default([]),
+    progress: z.array(z.object({ date: z.string(), text: z.string() })).default([]),
     draft: z.boolean().default(false),
   }),
 });
