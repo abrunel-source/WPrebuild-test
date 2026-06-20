@@ -22,6 +22,8 @@
   --color-accent: #12edc9;
   --color-muted: #b4cdcd;
 
+  --color-sage: #b4cdcd; /* exact section background from the live site */
+  --color-sage-tint: #d3e1e1;
   --color-text: #0b1727;
   --color-text-muted: #5b6b73;
   --color-background: #ffffff;
@@ -195,6 +197,21 @@ main {
 
 .section--surface {
   background: var(--color-surface);
+}
+
+.section--sage {
+  background: var(--color-sage);
+}
+
+.section--navy {
+  background: var(--color-secondary);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.section--navy h1,
+.section--navy h2,
+.section--navy h3 {
+  color: #fff;
 }
 
 .eyebrow {

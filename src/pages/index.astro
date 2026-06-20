@@ -15,24 +15,29 @@ const past = allEvents
   .sort((a, b) => (b.data.date as Date).valueOf() - (a.data.date as Date).valueOf());
 const homeEvents = [...upcoming, ...past].slice(0, 3);
 
+const partners = await getCollection('partners', ({ data }) => !data.draft);
+
 const pillars = [
   {
     title: 'Educate',
-    body: 'Goal: educate clinicians and communities on the health effects of heat, pollution, and extreme weather events. How: free in-person education, expert online lecture series, and access to collaborative climate and health resources.',
+    goal: 'Educate clinicians and communities on the health effects of heat, pollution, and extreme weather events.',
+    how: 'FCCA provides free in-person education, expert online lecture series, and access to collaborative climate and health resources.',
     href: '/education/',
-    img: '/media/2023/07/happy-businessman-giving-presentation-group-colleagues-doctors-1.jpg',
+    img: '/media/2023/07/happy-businessman-giving-presentation-group-colleagues-doctors-1-scaled-e1689623066326.jpg',
   },
   {
     title: 'Engage',
-    body: 'Goal: build a community of health-focused volunteers who share information and support health-centered policy. How: virtual and in-person social events across the state, community health education, and media features.',
+    goal: 'Build a community of health-focused volunteers that can share information and support health-centered policy.',
+    how: 'Virtual and in-person social events across the state, community health education initiatives, and social and traditional media features.',
     href: '/events/',
     img: '/media/2023/07/two-volunteers-different-races-hold-paper-show-how-important-it-is-take-care-environment-volunteering-concept_1212-7574-transformed-e1689622968793.jpeg',
   },
   {
     title: 'Advocate',
-    body: 'Goal: advance health-centered environmental policies that prioritize those in urgent need. How: mobilize empowered volunteers to educate policymakers and communities on the health impacts of heat, pollution, and extreme weather events.',
+    goal: 'Advance health-centered environmental policies that prioritizes those in urgent need.',
+    how: 'Mobilize empowered health-focused volunteers to educate policy makers and their communities on the health impacts of heat, pollution, and extreme weather events.',
     href: '/advocacy/',
-    img: '/media/2023/07/happy-black-doctor-talking-presenter-during-educational-event-convention-center.jpg',
+    img: '/media/2023/07/happy-black-doctor-talking-presenter-during-educational-event-convention-center-scaled-e1689623448577-300x278.jpg',
   },
 ];
 ---
@@ -41,75 +46,80 @@ const pillars = [
   title="Home"
   description="Florida Clinicians for Climate Action — clinicians educating clinicians on the health impacts of heat, pollution, and extreme weather events."
 >
-  <!-- Hero -->
-  <section class="hero">
-    <div class="container hero__inner">
-      <div class="hero__copy">
-        <p class="eyebrow">Who we are</p>
-        <h1>Clinicians Educating Clinicians on the Health Impacts of Heat, Pollution, and Extreme Weather Events</h1>
-        <p class="lead">
+  <!-- Hero: full-bleed clinician-with-globe image + org name overlay -->
+  <section class="home-hero">
+    <div class="container home-hero__inner">
+      <h1 class="home-hero__title">Florida Clinicians<br />For Climate Action</h1>
+      <div class="home-hero__cta">
+        <a class="button button--accent" href="#footer">Get Involved</a>
+        <a class="button" href={site.donateUrl} target="_blank" rel="noopener">Donate</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Who we are -->
+  <section class="section who">
+    <div class="container who__inner">
+      <div class="who__media">
+        <img class="who__img who__img--1" src="/media/2023/07/Knee-Joint-Examination_edited-copy.jpg" alt="A clinician examining a patient" width="400" height="600" />
+        <img class="who__img who__img--2" src="/media/2023/07/large-group-medical-experts-listening-colleague-during-online-meeting_236854-37409-transformed-copy.jpeg" alt="Medical experts in a meeting" width="400" height="600" />
+        <img class="who__detail" src="/media/2023/07/detail2.png" alt="" aria-hidden="true" width="82" height="133" />
+      </div>
+      <div class="who__copy">
+        <p class="eyebrow">Who We Are</p>
+        <h2>Clinicians Educating Clinicians on the Health Impacts of Heat, Pollution, and Extreme Weather Events</h2>
+        <p>
           As clinicians in Florida, we educate and engage clinicians and everyday Floridians
           to protect their communities against the health harms of heat, pollution, and
           extreme weather events — both now and for the future — with fair and timely public
           health responses.
         </p>
-        <div class="hero__cta">
-          <a class="button button--accent" href={site.donateUrl} target="_blank" rel="noopener">Donate</a>
-          <a class="button button--ghost" href="/about/">About us</a>
-        </div>
-      </div>
-      <div class="hero__media">
-        <img
-          src="/media/2023/07/Knee-Joint-Examination_edited-copy.jpg"
-          alt="A clinician examining a patient"
-          width="400"
-          height="600"
-          loading="eager"
-        />
-        <img
-          src="/media/2023/07/large-group-medical-experts-listening-colleague-during-online-meeting_236854-37409-transformed-copy.jpeg"
-          alt="Medical experts listening during a meeting"
-          width="400"
-          height="600"
-          loading="eager"
-        />
+        <p>
+          We launched Florida Clinicians for Climate Action in 2018, because we realized that
+          we could overcome our challenges much more efficiently by working together.
+        </p>
+        <a class="button" href="/about/">About us</a>
       </div>
     </div>
   </section>
 
   <!-- What we do -->
-  <section class="section">
+  <section class="section section--sage">
     <div class="container">
-      <header class="section-head">
+      <header class="section-head section-head--center">
         <p class="eyebrow">What we do</p>
-        <h2>You Can Be An Agent For Change</h2>
-        <p class="lead">
+        <h2>You Can Be An Agent For Change!</h2>
+        <p>
           From our proprietary community education initiative — Project C-HOT — to working
-          with elected officials, FCCA is the first stop for those looking to promote
-          positive changes in the overall health of Floridians year-round.
+          with elected officials, FCCA is the first stop for those looking to promote positive
+          changes in the overall health of Floridians year-round.
         </p>
       </header>
       <div class="grid grid--3 pillars">
         {pillars.map((p) => (
-          <a class="pillar card" href={p.href}>
-            <span class="card__media"><img src={p.img} alt="" loading="lazy" /></span>
-            <span class="card__body">
-              <span class="card__title">{p.title}</span>
-              <span class="pillar__body">{p.body}</span>
-              <span class="pillar__more">Learn more →</span>
-            </span>
-          </a>
+          <article class="card pillar">
+            <a class="card__media" href={p.href}><img src={p.img} alt="" loading="lazy" /></a>
+            <div class="card__body">
+              <h3 class="card__title">{p.title}</h3>
+              <p class="pillar__line"><strong>Goal:</strong> {p.goal}</p>
+              <p class="pillar__line"><strong>How we do it:</strong> {p.how}</p>
+              <a class="pillar__more" href={p.href}>Learn more →</a>
+            </div>
+          </article>
         ))}
       </div>
     </div>
   </section>
 
   <!-- Mission band -->
-  <section class="section mission">
+  <section class="section section--sage mission">
     <div class="container mission__inner">
-      <div>
-        <p class="eyebrow">Our health</p>
-        <h2>Environmental Disasters Are Harming Our Health</h2>
+      <div class="mission__card">
+        <p class="eyebrow" style="color:var(--color-accent)">Our health</p>
+        <h2>Environmental Disasters are Harming our Health!</h2>
+        <a class="button button--accent" href="#footer">Act now</a>
+      </div>
+      <div class="mission__body">
         <p>
           Some people are more vulnerable than others, and if we do nothing the dangers to
           our well-being will keep increasing. As clinicians, we are the trusted messengers
@@ -121,19 +131,17 @@ const pillars = [
           public awareness about the health impacts of heat, pollution, and extreme weather
           events.
         </p>
-        <a class="button" href="/contact/">Get involved</a>
       </div>
-      <img src="/media/2023/07/Doctor-Office_edited.jpg" alt="Clinicians in conversation" loading="lazy" />
     </div>
   </section>
 
   <!-- Events -->
   {homeEvents.length > 0 && (
-    <section class="section section--surface">
+    <section class="section section--sage">
       <div class="container">
         <header class="section-head section-head--row">
           <div>
-            <p class="eyebrow">Get involved</p>
+            <p class="eyebrow">Events</p>
             <h2>Upcoming Events</h2>
           </div>
           <a class="button button--ghost" href="/events/">See all events</a>
@@ -148,98 +156,149 @@ const pillars = [
   <!-- Heat-safety brochure -->
   <section class="section">
     <div class="container brochure">
+      <a class="brochure__media" href="/media/2024/07/HeatHealth-English.png" target="_blank" rel="noopener">
+        <img src="/media/2024/07/HeatHealth-English.png" alt="FCCA Heat & Health brochure" loading="lazy" />
+      </a>
       <div class="brochure__copy">
         <p class="eyebrow">Our brochure</p>
         <h2>Protect Yourself Against the Heat</h2>
         <p>Dozens die in Miami-Dade County each year due to heat.</p>
-        <p>
-          Learn the warning signs and precautions for heat illness and exhaustion with our
-          free brochure.
-        </p>
-        <a class="button" href="/media/2024/07/HeatHealth-English.png" target="_blank" rel="noopener">
-          Read the brochure
-        </a>
+        <p>Learn the warning signs and precautions for heat illness and exhaustion with our free brochure.</p>
+        <a class="button" href="/media/2024/07/HeatHealth-English.png" target="_blank" rel="noopener">Read the brochure</a>
       </div>
-      <a class="brochure__media" href="/media/2024/07/HeatHealth-English.png" target="_blank" rel="noopener">
-        <img src="/media/2024/07/HeatHealth-English.png" alt="FCCA Heat & Health brochure" loading="lazy" />
-      </a>
     </div>
   </section>
+
+  <!-- Partners -->
+  {partners.length > 0 && (
+    <section class="section section--navy">
+      <div class="container">
+        <header class="section-head section-head--center">
+          <h2>Our partners</h2>
+        </header>
+        <div class="partner-logos">
+          {partners.map((p) => p.data.logo && (
+            <a class="partner-logo" href={`/funders/${p.id}/`}>
+              <img src={p.data.logo} alt={p.data.title} loading="lazy" />
+            </a>
+          ))}
+        </div>
+        <p style="text-align:center;margin-top:var(--space-lg)">
+          <a class="button button--ghost" href="/funders/" style="color:#fff;border-color:#fff">View all funders</a>
+        </p>
+      </div>
+    </section>
+  )}
 </BaseLayout>
 
 <style>
-  .hero {
-    background: linear-gradient(135deg, #f1f6f6 0%, #e6eeee 100%);
-    overflow: hidden;
-  }
-  .hero__inner {
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
+  /* ---- Hero ---- */
+  .home-hero {
+    position: relative;
+    background:
+      linear-gradient(90deg, rgba(1, 74, 75, 0.78) 0%, rgba(1, 74, 75, 0.35) 55%, rgba(1, 74, 75, 0) 100%),
+      url('/media/2023/08/iStock-157333361-copy.jpg') center right / cover no-repeat;
+    min-height: 460px;
+    display: flex;
     align-items: center;
-    gap: var(--space-xl);
-    padding-block: var(--space-2xl);
   }
-  .hero__cta {
+  .home-hero__inner {
+    width: 100%;
+  }
+  .home-hero__title {
+    color: #fff;
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    margin-bottom: var(--space-md);
+    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
+  }
+  .home-hero__cta {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-sm);
-    margin-top: var(--space-lg);
   }
-  .hero__media {
+
+  /* ---- Who we are ---- */
+  .who__inner {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: var(--space-xl);
+    align-items: center;
+  }
+  .who__media {
+    position: relative;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--space-sm);
   }
-  .hero__media img {
+  .who__img {
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     width: 100%;
-    height: 100%;
-    object-fit: cover;
     aspect-ratio: 2 / 3;
+    object-fit: cover;
   }
-  .hero__media img:first-child {
+  .who__img--1 {
     margin-top: var(--space-lg);
   }
+  .who__detail {
+    position: absolute;
+    top: -18px;
+    right: -10px;
+    width: 70px;
+    height: auto;
+    box-shadow: none;
+  }
 
-  .section-head {
+  /* ---- Section heads ---- */
+  .section-head--center {
     max-width: 60ch;
+    margin-inline: auto;
+    text-align: center;
     margin-bottom: var(--space-xl);
   }
   .section-head--row {
-    max-width: none;
     display: flex;
     align-items: end;
     justify-content: space-between;
     gap: var(--space-md);
     flex-wrap: wrap;
+    margin-bottom: var(--space-xl);
   }
 
-  .pillars .pillar {
-    text-decoration: none;
-    color: inherit;
-  }
-  .pillar__body {
-    color: var(--color-text-muted);
+  /* ---- Pillars ---- */
+  .pillar__line {
     font-size: 0.95rem;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-xs);
   }
   .pillar__more {
     margin-top: auto;
     font-weight: 700;
     color: var(--color-primary);
+    text-decoration: none;
   }
 
+  /* ---- Mission ---- */
   .mission__inner {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: center;
+    grid-template-columns: 0.8fr 1.2fr;
     gap: var(--space-xl);
+    align-items: center;
   }
-  .mission__inner img {
+  .mission__card {
+    background: var(--color-secondary);
+    color: #fff;
     border-radius: var(--radius);
+    padding: var(--space-lg);
     box-shadow: var(--shadow);
   }
+  .mission__card h2 {
+    color: #fff;
+  }
 
+  /* ---- Brochure ---- */
   .brochure {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -253,18 +312,39 @@ const pillars = [
     max-height: 460px;
     width: auto;
   }
-  @media (max-width: 880px) {
-    .brochure {
-      grid-template-columns: 1fr;
-    }
+
+  /* ---- Partners ---- */
+  .partner-logos {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-md);
+  }
+  .partner-logo {
+    background: #fff;
+    border-radius: var(--radius-sm);
+    padding: var(--space-md) var(--space-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 110px;
+    min-width: 180px;
+  }
+  .partner-logo img {
+    max-height: 100%;
+    max-width: 220px;
+    width: auto;
+    object-fit: contain;
   }
 
   @media (max-width: 880px) {
-    .hero__inner,
-    .mission__inner {
+    .who__inner,
+    .mission__inner,
+    .brochure {
       grid-template-columns: 1fr;
     }
-    .hero__media {
+    .who__media {
       order: -1;
     }
   }
