@@ -7,6 +7,25 @@ const events = (await getCollection('events', ({ data }) => !data.draft))
   .filter((e) => e.data.date && (e.data.date as Date) >= now)
   .sort((a, b) => (a.data.date as Date).valueOf() - (b.data.date as Date).valueOf())
   .slice(0, 3);
+
+const pillars = [
+  {
+    title: 'Impact',
+    body: 'From September 2022 to September 2024, Project C-HOT trained over 1,000 clinicians and patients at 40 locations, reaching thousands of Floridians as extreme weather events such as hurricanes and heat waves intensified.',
+  },
+  {
+    title: 'Service',
+    body: 'The program also benefits volunteers, as health professionals learn to incorporate climate health into their practices — enhancing their ability to care for climate-impacted populations.',
+  },
+  {
+    title: 'Practical Education',
+    body: 'Volunteers educate residents on how to safely store medications during heat waves, how to stay cool outside while waiting for public transportation, and why their neighborhood is hotter than others.',
+  },
+  {
+    title: 'Growth',
+    body: 'Three major donors funded Project C-HOT’s expansion: Allegany Franciscan Ministries, Tampa Bay Regional Resiliency Coalition, and the CDC Foundation.',
+  },
+];
 ---
 
 <BaseLayout
@@ -15,29 +34,45 @@ const events = (await getCollection('events', ({ data }) => !data.draft))
 >
   <section class="page-hero">
     <div class="container">
-      <p class="eyebrow" style="color:#fff">Programs</p>
-      <h1>Project C-HOT</h1>
-      <p>FCCA's Climate Health Outreach Team — clinicians and community educators on the front lines.</p>
+      <p class="eyebrow" style="color:#fff">Project C-HOT</p>
+      <h1>Climate Health is Community Health!</h1>
     </div>
   </section>
 
   <section class="section">
     <div class="content">
       <p class="lead">
-        Project C-HOT (Climate Health Outreach Team) trains clinicians and community
-        members to recognize climate-related health risks — especially extreme heat — and
-        to help patients and neighbors prepare.
+        Florida Clinicians for Climate Action developed and launched the "Climate Health
+        Outreach Team Program" (Project C-HOT) to deliver essential climate education to
+        underserved and highly vulnerable communities across Florida.
       </p>
       <p>
-        As clinicians in Florida, we educate and engage other Florida clinicians to protect
-        communities against the health harms of climate change. C-HOT extends that mission
-        into the community through hands-on education, risk-assessment tools, and trusted
-        local messengers.
+        FCCA partners with community health centers, schools, and churches to train
+        volunteers — from high school students to retired professionals — to serve as
+        "climate health educators." These volunteers teach local residents about climate
+        change and its impact on health, particularly in areas with high heat vulnerability.
       </p>
+      <p><strong>Project C-HOT saves lives, strengthens community resilience, and improves public health.</strong></p>
     </div>
   </section>
 
   <section class="section section--surface">
+    <div class="container">
+      <header class="section-head"><p class="eyebrow">Project C-HOT</p><h2>How it works</h2></header>
+      <div class="grid grid--2">
+        {pillars.map((p) => (
+          <div class="card chot-card">
+            <div class="card__body">
+              <h3 class="card__title">{p.title}</h3>
+              <p>{p.body}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
     <div class="content">
       <p class="eyebrow">A C-HOT initiative</p>
       <h2>Doula C-HOT</h2>
@@ -53,7 +88,7 @@ const events = (await getCollection('events', ({ data }) => !data.draft))
   </section>
 
   {events.length > 0 && (
-    <section class="section">
+    <section class="section section--surface">
       <div class="container">
         <header class="section-head section-head--row">
           <div><p class="eyebrow">Events</p><h2>Upcoming Trainings &amp; Events</h2></div>
@@ -84,6 +119,10 @@ const events = (await getCollection('events', ({ data }) => !data.draft))
       gap: var(--space-md);
       flex-wrap: wrap;
       margin-bottom: var(--space-xl);
+    }
+    .chot-card .card__body p {
+      margin: 0;
+      color: var(--color-text-muted);
     }
   </style>
 </BaseLayout>

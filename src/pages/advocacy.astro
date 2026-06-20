@@ -4,38 +4,62 @@ import { getCollection } from 'astro:content';
 
 const news = (await getCollection('news', ({ data }) => !data.draft))
   .sort((a, b) => (b.data.date?.valueOf() ?? 0) - (a.data.date?.valueOf() ?? 0))
-  .slice(0, 3);
+  .slice(0, 6);
+
+const priorities = [
+  { title: 'Heat', body: 'Protecting Floridians from the rising health threat of extreme heat.' },
+  { title: 'Greening Public Schools', body: 'Healthier, more resilient learning environments for students and staff.' },
+  { title: 'Young People Climate Lawsuit', body: 'Standing with young Floridians defending their right to a healthy environment.' },
+  { title: 'Anti-Incinerator Action', body: 'Opposing polluting incinerators that harm community health and air quality.' },
+  { title: 'Outdoor Worker Advocacy', body: 'Championing heat protections for the workers most exposed to extreme conditions.' },
+];
 ---
 
-<BaseLayout title="Advocacy" description="Advancing equitable, health-centered climate policy in Florida.">
+<BaseLayout title="Advocacy" description="Advancing health-centered environmental policy in Florida.">
   <section class="page-hero">
     <div class="container">
-      <p class="eyebrow" style="color:#fff">Advocate</p>
+      <p class="eyebrow" style="color:#fff">Advocacy</p>
       <h1>Advocacy</h1>
-      <p>Advancing equitable and just, health-centered climate policies across Florida.</p>
+      <p>Advancing health-centered environmental policies that prioritize those in urgent need.</p>
     </div>
   </section>
 
   <section class="section">
+    <div class="container">
+      <header class="section-head"><p class="eyebrow">Advocacy</p><h2>Our Priorities</h2></header>
+      <div class="grid grid--3">
+        {priorities.map((p) => (
+          <div class="card priority">
+            <div class="card__body">
+              <h3 class="card__title">{p.title}</h3>
+              <p>{p.body}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--surface">
     <div class="content">
       <p class="eyebrow">Advocacy Committee</p>
       <h2>Clinicians as trusted messengers</h2>
       <p>
-        Our goal is to advance equitable, health-centered climate policy. We mobilize our
-        empowered clinicians to educate policymakers and their communities on the health
-        impacts of climate change — especially for the most vulnerable patients.
+        Our Advocacy Committee, chaired by <strong>Carol Lindsey</strong>, mobilizes
+        empowered volunteers to educate policymakers and communities on the health impacts of
+        heat, pollution, and extreme weather events — especially for the most vulnerable
+        patients. The committee tracks legislation, organizes calls to action, and equips
+        clinicians with the tools to make the health case for environmental solutions.
       </p>
       <p>
-        The Advocacy Committee tracks legislation, organizes calls to action, and equips
-        clinicians with the tools and talking points to make the health case for climate
-        solutions. Want to get involved? <a href="/contact/">Reach out to the committee.</a>
+        Want to get involved? <a href="/contact/">Reach out to the committee.</a>
       </p>
       <p><a class="button" href="#footer">Join us</a></p>
     </div>
   </section>
 
   {news.length > 0 && (
-    <section class="section section--surface">
+    <section class="section">
       <div class="container">
         <header class="section-head section-head--row">
           <div>
@@ -61,6 +85,14 @@ const news = (await getCollection('news', ({ data }) => !data.draft))
     </section>
   )}
 
+  <section class="section section--surface">
+    <div class="content">
+      <p class="eyebrow">Find us</p>
+      <h2>Our Locations</h2>
+      <p>FCCA organizes across Florida — including South Florida and statewide virtual programming.</p>
+    </div>
+  </section>
+
   <style>
     .section-head--row {
       display: flex;
@@ -69,6 +101,10 @@ const news = (await getCollection('news', ({ data }) => !data.draft))
       gap: var(--space-md);
       flex-wrap: wrap;
       margin-bottom: var(--space-xl);
+    }
+    .priority .card__body p {
+      margin: 0;
+      color: var(--color-text-muted);
     }
   </style>
 </BaseLayout>

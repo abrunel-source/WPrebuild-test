@@ -18,19 +18,19 @@ const homeEvents = [...upcoming, ...past].slice(0, 3);
 const pillars = [
   {
     title: 'Educate',
-    body: 'We provide free CMEs, expert lecture series, and access to climate-and-health resources so clinicians can prepare patients for the challenges ahead.',
+    body: 'Goal: educate clinicians and communities on the health effects of heat, pollution, and extreme weather events. How: free in-person education, expert online lecture series, and access to collaborative climate and health resources.',
     href: '/education/',
     img: '/media/2023/07/happy-businessman-giving-presentation-group-colleagues-doctors-1.jpg',
   },
   {
     title: 'Engage',
-    body: 'We build a community of like-minded clinicians who share information and support equitable, health-centered responses to climate change.',
+    body: 'Goal: build a community of health-focused volunteers who share information and support health-centered policy. How: virtual and in-person social events across the state, community health education, and media features.',
     href: '/events/',
     img: '/media/2023/07/two-volunteers-different-races-hold-paper-show-how-important-it-is-take-care-environment-volunteering-concept_1212-7574-transformed-e1689622968793.jpeg',
   },
   {
     title: 'Advocate',
-    body: 'We mobilize empowered clinicians to advance equitable, just, health-centered climate policies for our patients — especially the most vulnerable.',
+    body: 'Goal: advance health-centered environmental policies that prioritize those in urgent need. How: mobilize empowered volunteers to educate policymakers and communities on the health impacts of heat, pollution, and extreme weather events.',
     href: '/advocacy/',
     img: '/media/2023/07/happy-black-doctor-talking-presenter-during-educational-event-convention-center.jpg',
   },
@@ -39,18 +39,19 @@ const pillars = [
 
 <BaseLayout
   title="Home"
-  description="Florida Clinicians for Climate Action — clinicians educating clinicians on the health impacts of climate change."
+  description="Florida Clinicians for Climate Action — clinicians educating clinicians on the health impacts of heat, pollution, and extreme weather events."
 >
   <!-- Hero -->
   <section class="hero">
     <div class="container hero__inner">
       <div class="hero__copy">
         <p class="eyebrow">Who we are</p>
-        <h1>Clinicians Educating Clinicians on the Health Impacts of Climate Change</h1>
+        <h1>Clinicians Educating Clinicians on the Health Impacts of Heat, Pollution, and Extreme Weather Events</h1>
         <p class="lead">
-          As clinicians in Florida, we educate and engage other Florida clinicians to
-          protect communities against the health harms of climate change — and we advocate
-          for equitable public health solutions.
+          As clinicians in Florida, we educate and engage clinicians and everyday Floridians
+          to protect their communities against the health harms of heat, pollution, and
+          extreme weather events — both now and for the future — with fair and timely public
+          health responses.
         </p>
         <div class="hero__cta">
           <a class="button button--accent" href={site.donateUrl} target="_blank" rel="noopener">Donate</a>
@@ -83,8 +84,9 @@ const pillars = [
         <p class="eyebrow">What we do</p>
         <h2>You Can Be An Agent For Change</h2>
         <p class="lead">
-          Florida Clinicians for Climate Action is achieving more than ever before. Learn
-          how we work every day to promote positive change.
+          From our proprietary community education initiative — Project C-HOT — to working
+          with elected officials, FCCA is the first stop for those looking to promote
+          positive changes in the overall health of Floridians year-round.
         </p>
       </header>
       <div class="grid grid--3 pillars">
@@ -107,7 +109,7 @@ const pillars = [
     <div class="container mission__inner">
       <div>
         <p class="eyebrow">Our health</p>
-        <h2>Climate Change Is Harming Our Health</h2>
+        <h2>Environmental Disasters Are Harming Our Health</h2>
         <p>
           Some people are more vulnerable than others, and if we do nothing the dangers to
           our well-being will keep increasing. As clinicians, we are the trusted messengers
@@ -116,7 +118,8 @@ const pillars = [
         <p>
           At Florida Clinicians for Climate Action, we're promoting initiatives to serve the
           people who need them most. Our mission is to educate, engage, and advocate — raising
-          public awareness about the effects of climate change on health.
+          public awareness about the health impacts of heat, pollution, and extreme weather
+          events.
         </p>
         <a class="button" href="/contact/">Get involved</a>
       </div>
@@ -141,6 +144,27 @@ const pillars = [
       </div>
     </section>
   )}
+
+  <!-- Heat-safety brochure -->
+  <section class="section">
+    <div class="container brochure">
+      <div class="brochure__copy">
+        <p class="eyebrow">Our brochure</p>
+        <h2>Protect Yourself Against the Heat</h2>
+        <p>Dozens die in Miami-Dade County each year due to heat.</p>
+        <p>
+          Learn the warning signs and precautions for heat illness and exhaustion with our
+          free brochure.
+        </p>
+        <a class="button" href="/media/2024/07/HeatHealth-English.png" target="_blank" rel="noopener">
+          Read the brochure
+        </a>
+      </div>
+      <a class="brochure__media" href="/media/2024/07/HeatHealth-English.png" target="_blank" rel="noopener">
+        <img src="/media/2024/07/HeatHealth-English.png" alt="FCCA Heat & Health brochure" loading="lazy" />
+      </a>
+    </div>
+  </section>
 </BaseLayout>
 
 <style>
@@ -214,6 +238,25 @@ const pillars = [
   .mission__inner img {
     border-radius: var(--radius);
     box-shadow: var(--shadow);
+  }
+
+  .brochure {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+    align-items: center;
+  }
+  .brochure__media img {
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-inline: auto;
+    max-height: 460px;
+    width: auto;
+  }
+  @media (max-width: 880px) {
+    .brochure {
+      grid-template-columns: 1fr;
+    }
   }
 
   @media (max-width: 880px) {
