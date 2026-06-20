@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    { "source": "/the-resources/:slug*", "destination": "/resources/:slug*", "permanent": true },
+    { "source": "/team-members/:slug+", "destination": "/team/:slug*", "permanent": true },
+    { "source": "/partners/:slug+", "destination": "/funders/:slug*", "permanent": true },
+    { "source": "/external-news/:slug*", "destination": "/news/:slug*", "permanent": true },
+    { "source": "/external-news_fcca/:slug*", "destination": "/news/:slug*", "permanent": true },
+    { "source": "/mailchimp-newsletter/:slug*", "destination": "/newsletters", "permanent": true },
+    { "source": "/resource-type/:slug*", "destination": "/education", "permanent": true }
+  ]
+}
