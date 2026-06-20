@@ -392,19 +392,51 @@ main {
 
 /* ---------- Page header band ---------- */
 .page-hero {
-  background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
+  background:
+    radial-gradient(900px 300px at 85% 20%, rgba(18, 237, 201, 0.18), transparent 60%),
+    var(--color-secondary);
   color: #fff;
   padding-block: var(--space-2xl);
 }
 
 .page-hero h1 {
   color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
 }
 
 .page-hero p {
   color: rgba(255, 255, 255, 0.85);
   max-width: 60ch;
   margin: 0;
+}
+
+.page-hero a {
+  color: #fff;
+}
+
+/* Split hero: title on the left, circular image on the right. */
+.page-hero__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-xl);
+  flex-wrap: wrap;
+}
+
+.page-hero__circle {
+  width: clamp(180px, 26vw, 280px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 6px rgba(18, 237, 201, 0.25), var(--shadow);
+}
+
+.page-hero__circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* ---------- Prose (markdown body) ---------- */

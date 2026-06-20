@@ -2,7 +2,8 @@
 title: "Eugene Fu, MD"
 role: "Treasurer"
 photo: "/media/2024/03/WhatsApp-Image-2024-03-25-at-16.32.51.jpeg"
-order: 4726
+group: "Board Of Directors"
+order: 2
 ---
 
 Dr. Fu has over twenty-five years of experience as a clinician scientist in the areas of pain, neuroscience, inflammation, and perioperative monitoring. His previous research and clinical experiences have prepared him to address the medical sequelae related to extreme heat, which include respiratory, cardiovascular and neurological complications. 

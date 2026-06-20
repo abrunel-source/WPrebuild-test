@@ -37,6 +37,7 @@ const team = defineCollection({
     title: z.string(),
     role: z.string().optional(),
     photo: z.string().optional(),
+    group: z.string().default('The Leadership Team'),
     order: z.number().default(999),
     draft: z.boolean().default(false),
   }),

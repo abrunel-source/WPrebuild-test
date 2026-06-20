@@ -4,16 +4,22 @@ import { site } from '../data/site';
 ---
 
 <BaseLayout title="Contact" description="Get in touch with Florida Clinicians for Climate Action.">
-  <section class="page-hero">
-    <div class="container">
-      <p class="eyebrow" style="color:#fff">Contact</p>
-      <h1>Get In Touch</h1>
-      <p>Questions, partnership ideas, or want to volunteer? We'd love to hear from you.</p>
+  <section class="page-hero page-hero--split">
+    <div class="container page-hero__inner">
+      <div>
+        <p class="eyebrow" style="color:#fff">Contact</p>
+        <h1>Contact Us</h1>
+        <p>Questions, partnership ideas, or want to volunteer? We'd love to hear from you.</p>
+      </div>
+      <div class="page-hero__circle">
+        <img src="/media/2023/07/Doctor-Office_edited.jpg" alt="FCCA clinicians" loading="eager" />
+      </div>
     </div>
   </section>
 
   <section class="section">
     <div class="content">
+      <h2>Get In Touch</h2>
       <p>
         Email us any time at <a href={`mailto:${site.email}`}>{site.email}</a>, or send a
         message using the form below.

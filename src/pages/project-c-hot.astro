@@ -32,15 +32,21 @@ const pillars = [
   title="Project C-HOT"
   description="The Climate Health Outreach Team (C-HOT) and Doula C-HOT programs."
 >
-  <section class="page-hero">
-    <div class="container">
-      <p class="eyebrow" style="color:#fff">Project C-HOT</p>
-      <h1>Climate Health is Community Health!</h1>
+  <section class="page-hero page-hero--split">
+    <div class="container page-hero__inner">
+      <div>
+        <p class="eyebrow" style="color:#fff">Project C-HOT</p>
+        <h1>Project C-HOT</h1>
+      </div>
+      <div class="page-hero__circle">
+        <img src="/media/2023/07/happy-black-doctor-talking-presenter-during-educational-event-convention-center.jpg" alt="C-HOT community education" loading="eager" />
+      </div>
     </div>
   </section>
 
   <section class="section">
     <div class="content">
+      <h2 class="chot-intro-title">Climate Health is Community Health!</h2>
       <p class="lead">
         Florida Clinicians for Climate Action developed and launched the "Climate Health
         Outreach Team Program" (Project C-HOT) to deliver essential climate education to
@@ -56,16 +62,14 @@ const pillars = [
     </div>
   </section>
 
-  <section class="section section--surface">
+  <section class="section section--sage">
     <div class="container">
-      <header class="section-head"><p class="eyebrow">Project C-HOT</p><h2>How it works</h2></header>
+      <header class="section-head section-head--center"><p class="eyebrow">Project C-HOT</p><h2>How it works</h2></header>
       <div class="grid grid--2">
         {pillars.map((p) => (
-          <div class="card chot-card">
-            <div class="card__body">
-              <h3 class="card__title">{p.title}</h3>
-              <p>{p.body}</p>
-            </div>
+          <div class="chot-card">
+            <h3>{p.title}</h3>
+            <p>{p.body}</p>
           </div>
         ))}
       </div>
@@ -120,9 +124,22 @@ const pillars = [
       flex-wrap: wrap;
       margin-bottom: var(--space-xl);
     }
-    .chot-card .card__body p {
+    .section-head--center {
+      text-align: center;
+      margin-bottom: var(--space-xl);
+    }
+    .chot-card {
+      background: var(--color-secondary);
+      color: rgba(255, 255, 255, 0.88);
+      border-radius: var(--radius);
+      padding: var(--space-lg);
+      box-shadow: var(--shadow);
+    }
+    .chot-card h3 {
+      color: #fff;
+    }
+    .chot-card p {
       margin: 0;
-      color: var(--color-text-muted);
     }
   </style>
 </BaseLayout>

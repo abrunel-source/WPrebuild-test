@@ -58,6 +58,15 @@ collections:
       - { label: "Name", name: "title", widget: "string" }
       - { label: "Role", name: "role", widget: "string", required: false }
       - { label: "Photo", name: "photo", widget: "image", required: false }
+      - label: "Group"
+        name: "group"
+        widget: "select"
+        default: "The Leadership Team"
+        options:
+          - "Board Of Directors"
+          - "The Leadership Team"
+          - "Educational Committee"
+          - "Advocacy Committee"
       - { label: "Order", name: "order", widget: "number", default: 999, value_type: "int" }
       - { label: "Draft", name: "draft", widget: "boolean", default: false }
       - { label: "Bio", name: "body", widget: "markdown", required: false }

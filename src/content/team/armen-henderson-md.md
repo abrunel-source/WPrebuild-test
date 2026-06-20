@@ -2,7 +2,8 @@
 title: "Armen Henderson, MD"
 role: "Secretary"
 photo: "/media/2024/03/WhatsApp-Image-2024-03-25-at-16.33.14.jpeg"
-order: 4728
+group: "Board Of Directors"
+order: 1
 ---
 
 Armen Henderson is a general internal medicine faculty member at the University of Miami Miller School of Medicine currently in a hybrid role of a hospitalist, educator, and community organizer. In 2022 he became a Climate Health and Equity Fellow the Medical Society Consortium.

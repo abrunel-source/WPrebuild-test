@@ -2,7 +2,8 @@
 title: "Dr. Cheryl Holder"
 role: "Co-Founder and Executive Director"
 photo: "/media/2023/07/bio_cherylholder-1.jpeg"
-order: 2772
+group: "The Leadership Team"
+order: 3
 ---
 
 Dr. Cheryl L. Holder, a graduate of Princeton University and George Washington University School of

@@ -2,115 +2,218 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-const team = (await getCollection('team', ({ data }) => !data.draft))
-  .sort((a, b) => a.data.order - b.data.order)
-  .slice(0, 6);
-const partners = await getCollection('partners', ({ data }) => !data.draft);
+const leadership = (await getCollection('team', ({ data }) => !data.draft && data.group === 'The Leadership Team'))
+  .sort((a, b) => a.data.order - b.data.order);
+const partners = (await getCollection('partners', ({ data }) => !data.draft)).sort(
+  (a, b) => (b.data.grantDate?.valueOf() ?? 0) - (a.data.grantDate?.valueOf() ?? 0)
+);
+
+function grantLabel(d?: Date) {
+  return d ? d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }) : '—';
+}
 ---
 
 <BaseLayout title="About" description="The story of Florida Clinicians for Climate Action.">
-  <section class="page-hero">
-    <div class="container">
-      <p class="eyebrow" style="color:#fff">About Us</p>
-      <h1>Our Story</h1>
-      <p>
-        We launched Florida Clinicians for Climate Action in 2018, because we realized we
-        could overcome our challenges far more effectively by working together.
-      </p>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="content">
-      <p class="lead">
-        Florida Clinicians for Climate Action exists as a first stop for anyone seeking to
-        work at the intersection of climate and health in Florida.
-      </p>
-      <p>
-        FCCA grew out of a shared conviction: clinicians are trusted messengers who play a
-        vital role in protecting public health. By educating one another, building community,
-        and advocating for health-centered policy, we help Florida's communities — especially
-        the most vulnerable — stay safe from heat, pollution, and extreme weather events.
-      </p>
-    </div>
-  </section>
-
-  <section class="section section--surface">
-    <div class="content">
-      <p class="eyebrow">Symposium</p>
-      <h2>2018 Climate &amp; Health Equity Symposium</h2>
-      <p>
-        The 2018 Climate &amp; Health Equity Symposium educated over 100 clinicians — primarily
-        physicians of color — on addressing the health effects of climate change in low-income
-        Floridians. At the conclusion of the symposium, a breakout session of about 30
-        physicians agreed to create Florida Clinicians for Climate Action and issued the
-        <strong>Tampa Declaration on Climate &amp; Health</strong> — a call to action for
-        Florida health professionals to protect public health from climate change impacts.
-      </p>
-      <p><a class="button" href="/contact/">Join us</a></p>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <header class="section-head section-head--row">
-        <div>
-          <p class="eyebrow">Our leaders</p>
-          <h2>The Leadership Team</h2>
-        </div>
-        <a class="button button--ghost" href="/team/">Meet the team</a>
-      </header>
-      <div class="grid grid--3">
-        {team.map((member) => (
-          <a class="card team-card" href={`/team/${member.id}/`}>
-            {member.data.photo && (
-              <span class="team-card__photo"><img src={member.data.photo} alt={member.data.title} loading="lazy" /></span>
-            )}
-            <span class="card__body">
-              <span class="card__title">{member.data.title}</span>
-              {member.data.role && <span class="team-card__role">{member.data.role}</span>}
-            </span>
-          </a>
-        ))}
+  <!-- Hero band with circular image -->
+  <section class="page-hero page-hero--split">
+    <div class="container page-hero__inner">
+      <div>
+        <p class="eyebrow" style="color:#fff">About Us</p>
+        <h1>About</h1>
+      </div>
+      <div class="page-hero__circle">
+        <img src="/media/2023/07/large-group-medical-experts-listening-colleague-during-online-meeting_236854-37409-transformed-copy.jpeg" alt="FCCA clinicians" loading="eager" />
       </div>
     </div>
   </section>
 
+  <!-- Quote intro -->
+  <section class="section">
+    <div class="content">
+      <blockquote class="intro-quote">
+        Florida Clinicians for Climate Action exists as a first stop for anyone seeking to
+        work at the intersection of climate and health in Florida.
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- Our Story / Symposium -->
+  <section class="section section--sage">
+    <div class="container story">
+      <div class="story__media">
+        <img class="story__img story__img--1" src="/media/2023/07/happy-businessman-giving-presentation-group-colleagues-doctors-1-scaled-e1689623066326.jpg" alt="FCCA symposium" loading="lazy" />
+        <img class="story__img story__img--2" src="/media/2023/07/happy-black-doctor-talking-presenter-during-educational-event-convention-center-scaled-e1689623448577-300x278.jpg" alt="FCCA event" loading="lazy" />
+      </div>
+      <div class="story__copy">
+        <p class="eyebrow">Symposium</p>
+        <h2>2018 Climate &amp; Health Equity Symposium</h2>
+        <p>
+          The 2018 Climate &amp; Health Equity Symposium educated over 100 clinicians —
+          primarily physicians of color — on addressing the health effects of climate change
+          in low-income Floridians. At the conclusion of the symposium, a breakout session of
+          about 30 physicians agreed to create Florida Clinicians for Climate Action and
+          issued the <strong>Tampa Declaration on Climate &amp; Health</strong> — a call to
+          action for Florida health professionals to protect public health from climate
+          change impacts.
+        </p>
+        <a class="button" href="/contact/">Join us</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Funders -->
   {partners.length > 0 && (
-    <section class="section section--surface">
+    <section class="section section--navy">
       <div class="container">
-        <header class="section-head section-head--row">
-          <div>
-            <p class="eyebrow">Partners</p>
-            <h2>Our Funders</h2>
-          </div>
-          <a class="button button--ghost" href="/funders/">View all</a>
+        <header class="section-head section-head--center">
+          <p class="eyebrow" style="color:var(--color-accent)">Funders</p>
+          <h2>Our Funders</h2>
         </header>
-        <div class="grid grid--3 funder-logos">
-          {partners.map((p) => p.data.logo && (
-            <a class="funder-logo-link" href={`/funders/${p.id}/`}>
-              <img src={p.data.logo} alt={p.data.title} loading="lazy" />
+        <div class="grid grid--3">
+          {partners.map((p) => (
+            <article class="funder-card">
+              {p.data.logo && <img class="funder-card__logo" src={p.data.logo} alt={p.data.title} loading="lazy" />}
+              <dl class="funder-card__meta">
+                <div><dt>Grant date</dt><dd>{grantLabel(p.data.grantDate)}</dd></div>
+                <div><dt>Amount</dt><dd>{p.data.amount || '—'}</dd></div>
+                <div><dt>Status</dt><dd><span class="status">Active</span></dd></div>
+              </dl>
+              <a class="funder-card__link" href={`/funders/${p.id}/`}>Learn more →</a>
+            </article>
+          ))}
+        </div>
+        <p style="text-align:center;margin-top:var(--space-lg)">
+          <a class="button button--accent" href="/funders/">View all</a>
+        </p>
+      </div>
+    </section>
+  )}
+
+  <!-- Leadership -->
+  {leadership.length > 0 && (
+    <section class="section">
+      <div class="container">
+        <header class="section-head section-head--center">
+          <p class="eyebrow">Our leaders</p>
+          <h2>The Leadership Team</h2>
+        </header>
+        <div class="team-grid">
+          {leadership.map((member) => (
+            <a class="card team-card" href={`/team/${member.id}/`}>
+              {member.data.photo && <span class="team-card__photo"><img src={member.data.photo} alt={member.data.title} loading="lazy" /></span>}
+              <span class="card__body">
+                <span class="team-card__name">{member.data.title}</span>
+                {member.data.role && <span class="team-card__role">{member.data.role}</span>}
+              </span>
             </a>
           ))}
         </div>
+        <p style="text-align:center;margin-top:var(--space-lg)"><a class="button" href="/team/">Meet the team</a></p>
       </div>
     </section>
   )}
 </BaseLayout>
 
 <style>
-  .section-head--row {
+  .intro-quote {
+    background: var(--color-sage-tint);
+    border-inline-start: 5px solid var(--color-primary);
+    border-radius: var(--radius);
+    padding: var(--space-lg);
+    font-size: 1.3rem;
+    font-style: normal;
+    font-family: var(--font-heading);
+    color: var(--color-secondary);
+    margin: 0;
+  }
+
+  .story {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: var(--space-xl);
+    align-items: center;
+  }
+  .story__media {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+  }
+  .story__img {
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+  }
+  .story__img--1 {
+    margin-top: var(--space-lg);
+  }
+
+  .funder-card {
+    background: #fff;
+    border-radius: var(--radius);
+    padding: var(--space-lg);
+    box-shadow: var(--shadow);
     display: flex;
-    align-items: end;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+  .funder-card__logo {
+    max-height: 60px;
+    width: auto;
+    object-fit: contain;
+    align-self: flex-start;
+  }
+  .funder-card__meta {
+    margin: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .funder-card__meta div {
+    display: flex;
     justify-content: space-between;
-    gap: var(--space-md);
-    flex-wrap: wrap;
+    gap: var(--space-sm);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 0.4rem;
+  }
+  .funder-card__meta dt {
+    font-weight: 700;
+    color: var(--color-secondary);
+  }
+  .funder-card__meta dd {
+    margin: 0;
+    color: var(--color-text-muted);
+    text-align: right;
+  }
+  .status {
+    background: var(--color-accent);
+    color: var(--color-secondary);
+    font-weight: 700;
+    font-size: 0.78rem;
+    padding: 0.15em 0.7em;
+    border-radius: 999px;
+  }
+  .funder-card__link {
+    font-weight: 700;
+    text-decoration: none;
+    margin-top: auto;
+  }
+
+  .section-head--center {
+    text-align: center;
     margin-bottom: var(--space-xl);
+  }
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 280px));
+    gap: var(--space-lg);
+    justify-content: center;
   }
   .team-card {
     text-decoration: none;
     color: inherit;
     text-align: center;
+    background: #fff;
   }
   .team-card__photo {
     display: block;
@@ -125,28 +228,21 @@ const partners = await getCollection('partners', ({ data }) => !data.draft);
   }
   .team-card .card__body {
     align-items: center;
+    gap: 0.35rem;
+  }
+  .team-card__name {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    color: var(--color-primary);
   }
   .team-card__role {
-    color: var(--color-primary);
-    font-weight: 600;
+    color: var(--color-text-muted);
     font-size: 0.9rem;
   }
-  .funder-logos {
-    align-items: center;
-  }
-  .funder-logo-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--space-lg);
-    background: #fff;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    aspect-ratio: 16 / 9;
-  }
-  .funder-logo-link img {
-    max-height: 100%;
-    width: auto;
-    object-fit: contain;
+
+  @media (max-width: 820px) {
+    .story {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

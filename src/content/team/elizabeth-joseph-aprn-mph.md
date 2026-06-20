@@ -2,7 +2,8 @@
 title: "Elizabeth Joseph APRN, MPH"
 role: "Board Member"
 photo: "/media/2024/11/elizabeth-liz-joseph-headshot-e1732628704852.jpg"
-order: 4707
+group: "Board Of Directors"
+order: 3
 ---
 
 Ms. Elizabeth Joseph is a board-certified Nurse Practitioner and an Educator working at one of the largest hospitals

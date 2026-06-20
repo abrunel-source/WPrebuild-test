@@ -2,7 +2,8 @@
 title: "Dr. Agustin Rivas, MD"
 role: "Educational Committee Chair"
 photo: "/media/2025/01/Agustin-Rivas-Headshot-e1714489890765.jpg"
-order: 4873
+group: "Educational Committee"
+order: 1
 ---
 
 As a board-certified pediatrician, civil surgeon, and scientific diver, Dr. Rivas has

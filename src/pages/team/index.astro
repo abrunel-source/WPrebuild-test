@@ -2,46 +2,71 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-const team = (await getCollection('team', ({ data }) => !data.draft)).sort(
+const members = (await getCollection('team', ({ data }) => !data.draft)).sort(
   (a, b) => a.data.order - b.data.order
 );
+
+// Group by committee, in the order the live site presents them.
+const order = ['Board Of Directors', 'The Leadership Team', 'Educational Committee', 'Advocacy Committee'];
+const grouped = order
+  .map((name) => ({ name, members: members.filter((m) => m.data.group === name) }))
+  .filter((g) => g.members.length);
+// Any other groups (future-proof)
+for (const m of members) {
+  if (!order.includes(m.data.group) && !grouped.find((g) => g.name === m.data.group)) {
+    grouped.push({ name: m.data.group, members: members.filter((x) => x.data.group === m.data.group) });
+  }
+}
 ---
 
-<BaseLayout title="Our Team" description="Meet the leadership team of Florida Clinicians for Climate Action.">
+<BaseLayout title="Our Team" description="Meet the board and leadership of Florida Clinicians for Climate Action.">
   <section class="page-hero">
-    <div class="container">
-      <p class="eyebrow" style="color:#fff">About</p>
-      <h1>The Leadership Team</h1>
-      <p>The clinicians and advocates leading Florida Clinicians for Climate Action.</p>
-    </div>
+    <div class="container"><h1>Our Team</h1></div>
   </section>
 
-  <section class="section">
-    <div class="container">
-      <div class="grid grid--3 team-grid">
-        {team.map((member) => (
-          <a class="card team-card" href={`/team/${member.id}/`}>
-            {member.data.photo && (
-              <span class="team-card__photo">
-                <img src={member.data.photo} alt={member.data.title} loading="lazy" />
+  {grouped.map((group, i) => (
+    <section class={`section ${i % 2 === 0 ? 'section--sage' : 'section--navy'}`}>
+      <div class="container">
+        <header class="section-head section-head--center">
+          <p class="eyebrow" style={i % 2 === 1 ? 'color:var(--color-accent)' : undefined}>
+            {group.name === 'Board Of Directors' ? 'The Board' : 'Our Leaders'}
+          </p>
+          <h2>{group.name}</h2>
+        </header>
+        <div class="team-grid">
+          {group.members.map((member) => (
+            <a class="card team-card" href={`/team/${member.id}/`}>
+              {member.data.photo && (
+                <span class="team-card__photo"><img src={member.data.photo} alt={member.data.title} loading="lazy" /></span>
+              )}
+              <span class="card__body">
+                <span class="team-card__name">{member.data.title}</span>
+                {member.data.role && <span class="team-card__role">{member.data.role}</span>}
               </span>
-            )}
-            <span class="card__body">
-              <span class="card__title">{member.data.title}</span>
-              {member.data.role && <span class="team-card__role">{member.data.role}</span>}
-            </span>
-          </a>
-        ))}
+            </a>
+          ))}
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  ))}
 </BaseLayout>
 
 <style>
+  .section-head--center {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+  }
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 280px));
+    gap: var(--space-lg);
+    justify-content: center;
+  }
   .team-card {
     text-decoration: none;
     color: inherit;
     text-align: center;
+    background: #fff;
   }
   .team-card__photo {
     display: block;
@@ -56,10 +81,15 @@ const team = (await getCollection('team', ({ data }) => !data.draft)).sort(
   }
   .team-card .card__body {
     align-items: center;
+    gap: 0.35rem;
+  }
+  .team-card__name {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    color: var(--color-primary);
   }
   .team-card__role {
-    color: var(--color-primary);
-    font-weight: 600;
+    color: var(--color-text-muted);
     font-size: 0.9rem;
   }
 </style>
