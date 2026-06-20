@@ -5,31 +5,29 @@ import { getCollection } from 'astro:content';
 const partners = (await getCollection('partners', ({ data }) => !data.draft)).sort(
   (a, b) => (b.data.grantDate?.valueOf() ?? 0) - (a.data.grantDate?.valueOf() ?? 0)
 );
+function grantLabel(d?: Date) {
+  return d ? d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }) : '—';
+}
 ---
 
 <BaseLayout title="Our Funders" description="The foundations and partners that make FCCA's work possible.">
   <section class="page-hero">
-    <div class="container">
-      <p class="eyebrow" style="color:#fff">About</p>
-      <h1>Our Funders &amp; Partners</h1>
-      <p>The foundations and organizations whose support powers our work across Florida.</p>
-    </div>
+    <div class="container"><h1>Our Partners</h1></div>
   </section>
 
   <section class="section">
     <div class="container">
-      <div class="grid grid--2">
+      <div class="grid grid--3">
         {partners.map((p) => (
-          <article class="card funder">
-            {p.data.logo && (
-              <a class="funder__logo" href={`/funders/${p.id}/`}>
-                <img src={p.data.logo} alt={p.data.title} loading="lazy" />
-              </a>
-            )}
-            <div class="card__body">
-              <h3 class="card__title"><a href={`/funders/${p.id}/`}>{p.data.title}</a></h3>
-              {p.data.mission && <p class="card__meta">{p.data.mission.slice(0, 180)}{p.data.mission.length > 180 ? '…' : ''}</p>}
-            </div>
+          <article class="funder-card">
+            {p.data.logo && <img class="funder-card__logo" src={p.data.logo} alt={p.data.title} loading="lazy" />}
+            <h2 class="funder-card__title">{p.data.title}</h2>
+            <dl class="funder-card__meta">
+              <div><dt>Grant date</dt><dd>{grantLabel(p.data.grantDate)}</dd></div>
+              <div><dt>Amount</dt><dd>{p.data.amount || '—'}</dd></div>
+              <div><dt>Status</dt><dd><span class="status">Active</span></dd></div>
+            </dl>
+            <a class="funder-card__link" href={`/funders/${p.id}/`}>Learn more →</a>
           </article>
         ))}
       </div>
@@ -38,17 +36,58 @@ const partners = (await getCollection('partners', ({ data }) => !data.draft)).so
 </BaseLayout>
 
 <style>
-  .funder__logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    aspect-ratio: 16 / 9;
-    padding: var(--space-lg);
+  .funder-card {
     background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-lg);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
   }
-  .funder__logo img {
-    max-height: 100%;
+  .funder-card__logo {
+    max-height: 56px;
     width: auto;
     object-fit: contain;
+    align-self: flex-start;
+  }
+  .funder-card__title {
+    font-size: 1.15rem;
+    margin: 0;
+  }
+  .funder-card__meta {
+    margin: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .funder-card__meta div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 0.4rem;
+  }
+  .funder-card__meta dt {
+    font-weight: 700;
+    color: var(--color-secondary);
+  }
+  .funder-card__meta dd {
+    margin: 0;
+    color: var(--color-text-muted);
+    text-align: right;
+  }
+  .status {
+    background: var(--color-accent);
+    color: var(--color-secondary);
+    font-weight: 700;
+    font-size: 0.78rem;
+    padding: 0.15em 0.7em;
+    border-radius: 999px;
+  }
+  .funder-card__link {
+    font-weight: 700;
+    text-decoration: none;
+    margin-top: auto;
   }
 </style>

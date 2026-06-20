@@ -5,10 +5,10 @@ interface Props {
   event: CollectionEntry<'events'>;
 }
 const { event } = Astro.props;
-const { title, date, time, location, image, imageAlt } = event.data;
+const { title, date, time, location } = event.data;
 
 const dateLabel = date
-  ? date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })
+  ? date.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' })
   : null;
 
 // Location is sometimes stored as raw "lat,lng" coordinates — hide those.
@@ -16,29 +16,86 @@ const isCoords = location && /^-?\d+(\.\d+)?,\s*-?\d+(\.\d+)?$/.test(location.tr
 const place = location && !isCoords ? location : null;
 ---
 
-<article class="card">
-  {image && (
-    <a class="card__media" href={`/events/${event.id}/`}>
-      <img src={image} alt={imageAlt || title} loading="lazy" />
-    </a>
-  )}
-  <div class="card__body">
-    {dateLabel && (
-      <p class="card__meta">
-        <span class="tag">Event</span>
-        <span class="event-date">{dateLabel}{time ? ` · ${time}` : ''}</span>
-      </p>
-    )}
-    <h3 class="card__title"><a href={`/events/${event.id}/`}>{title}</a></h3>
-    {place && <p class="card__meta">📍 {place}</p>}
+<article class="event-card">
+  <h3 class="event-card__title"><a href={`/events/${event.id}/`}>{title}</a></h3>
+  <div class="event-card__pills">
+    {dateLabel && <span class="pill pill--date">{dateLabel}</span>}
+    {time && <span class="pill pill--time">{time}</span>}
   </div>
+  {place && <p class="event-card__place">📍 {place}</p>}
+  <a class="event-card__more" href={`/events/${event.id}/`}>
+    Learn more <span class="event-card__arrow" aria-hidden="true">→</span>
+  </a>
 </article>
 
 <style>
-  .event-date {
-    display: block;
-    margin-top: 0.35rem;
-    font-weight: 600;
+  .event-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-lg);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .event-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+  }
+  .event-card__title {
+    font-size: 1.15rem;
+    margin: 0;
+  }
+  .event-card__title a {
     color: var(--color-primary);
+    text-decoration: none;
+  }
+  .event-card__title a:hover {
+    color: var(--color-primary-dark);
+  }
+  .event-card__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .pill {
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.3em 0.85em;
+    border-radius: 999px;
+  }
+  .pill--date {
+    background: var(--color-secondary);
+    color: #fff;
+  }
+  .pill--time {
+    background: var(--color-sage);
+    color: var(--color-secondary);
+  }
+  .event-card__place {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+  }
+  .event-card__more {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    text-decoration: none;
+    color: var(--color-secondary);
+  }
+  .event-card__arrow {
+    display: inline-grid;
+    place-items: center;
+    width: 1.8em;
+    height: 1.8em;
+    border-radius: 50%;
+    background: var(--color-secondary);
+    color: #fff;
+    font-size: 0.85em;
   }
 </style>
