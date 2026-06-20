@@ -12,6 +12,24 @@ for editors and a few Vercel serverless functions for forms.
 - **Newsletter opt-in:** footer form → `POST /api/subscribe` → Mailchimp (double opt-in)
 - **Secrets:** live in Vercel env vars only — never in the repo
 
+### Design fidelity
+
+Every page was rebuilt to match the live site, verified by rendering the
+original pages (from `.webarchive` captures) with a headless browser and
+sampling the exact palette. Highlights:
+
+- Brand palette sampled from the live site: sea-glass `#B4CDCD` section bands,
+  navy `#122D41`, teal `#016566`, mint `#12EDC9`
+- Full-bleed clinician-with-globe hero; sea-glass / navy alternating sections
+- Team grouped by committee; About with funder grant cards + leadership
+- Archive **filter pills** (Education resource-type, Events region, Funders
+  grant-status) — client-side, driven by imported taxonomy data
+- Funder pages with grant **progress timelines** and **galleries**
+- Single pages: resource "recently added" sidebar + prev/next, event Date card
+- Accessibility toolbar, cookie-consent banner, sitemap, robots.txt, and
+  301 redirects from the old WordPress URL structure (`vercel.json` +
+  `astro.config.mjs`)
+
 ## Content model (WordPress CPTs → Astro collections)
 
 The original site used JetEngine custom post types. These were inventoried from
